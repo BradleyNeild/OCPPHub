@@ -1,0 +1,33 @@
+version: '3'
+networks:
+  ocpp_network:
+    external: true
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    command: python manage.py runserver 0.0.0.0:8002
+    volumes:
+      - .:/app
+    ports:
+      - "8002:8002"
+    networks:
+      - ocpp_network
+    env_file:
+      - .env
+
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy
+    command: python ocpp_hub_app/proxy.py
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    networks:
+      - ocpp_network
+    env_file:
+      - .env

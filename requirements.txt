@@ -1,0 +1,13 @@
+django<4
+asyncio==3.4.3
+websockets==11.0.3
+aiohttp==3.9.5
+djangorestframework==3.12.4
+django-oauth-toolkit==1.6.3
+django-cors-headers
+requests
+djangorestframework
+requests_oauthlib
+django-environ
+django-allauth
+python-dotenv

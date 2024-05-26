@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Welcome to OCPP Hub</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">OCPP Hub</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'account_login' %}">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container text-center mt-5">
+        <h1>Welcome to OCPP Hub</h1>
+        <p>Your one-stop solution for managing charge points.</p>
+        <a href="{% url 'account_login' %}" class="btn btn-primary btn-lg mt-3">Login</a>
+    </div>
+</body>
+</html>

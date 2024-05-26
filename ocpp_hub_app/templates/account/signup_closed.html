@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Sign Up Closed{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mt-3">{% trans "Sign Up Closed" %}</h1>
+    <p>{% trans "New account registration is currently closed." %}</p>
+    <a href="{% url 'account_login' %}" class="btn btn-primary">{% trans "Return to Login" %}</a>
+</div>
+{% endblock %}

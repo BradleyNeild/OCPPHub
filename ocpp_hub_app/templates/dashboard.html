@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">Welcome to the Dashboard</h1>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    Charge Points
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ status_info.total_chargepoints }}</h5>
+                    <p class="card-text">Total Charge Points</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    Active Charge Points
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ status_info.active_chargepoints }}</h5>
+                    <p class="card-text">Active</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    Inactive Charge Points
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ status_info.inactive_chargepoints }}</h5>
+                    <p class="card-text">Inactive</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    Authorizations
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ status_info.total_authorizations }}</h5>
+                    <p class="card-text">Total Authorizations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-5">Your Charge Points</h2>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chargepoint in chargepoints %}
+            <tr>
+                <td>{{ chargepoint.name }}</td>
+                <td>{{ chargepoint.location }}</td>
+                <td>{{ chargepoint.status }}</td>
+                <td>
+                    <a href="{% url 'chargepoint_edit' chargepoint.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'chargepoint_delete' chargepoint.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="{% url 'authorization_list' chargepoint.pk %}" class="btn btn-sm btn-info">Manage Authorizations</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="mt-5">Your Authorizations</h2>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>CSMS Name</th>
+                <th>Status</th>
+                <th>Connect URL</th>
+                <th>Charge Point</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for authorization in authorizations %}
+            <tr>
+                <td>{{ authorization.csms_name }}</td>
+                <td>{{ authorization.status }}</td>
+                <td>{{ authorization.connect_url }}</td>
+                <td>{{ authorization.chargepoint.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

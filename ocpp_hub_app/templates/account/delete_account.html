@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mt-3">{% trans "Delete Account" %}</h1>
+    <p>
+        {% trans "Are you sure you want to delete your account? This action cannot be undone." %}
+    </p>
+    <form method="post" action="{% url 'delete_account' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Delete My Account" %}</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </form>
+</div>
+{% endblock %}

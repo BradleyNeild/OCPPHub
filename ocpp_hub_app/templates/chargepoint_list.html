@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Charge Points{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">Charge Points</h1>
+    <a href="{% url 'chargepoint_create' %}" class="btn btn-success mb-3">Create New Charge Point</a>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for chargepoint in chargepoints %}
+            <tr>
+                <td>{{ chargepoint.name }}</td>
+                <td>{{ chargepoint.location }}</td>
+                <td>{{ chargepoint.status }}</td>
+                <td>
+                    <a href="{% url 'chargepoint_edit' chargepoint.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{% url 'chargepoint_delete' chargepoint.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="{% url 'authorization_list' chargepoint.pk %}" class="btn btn-sm btn-info">Manage Authorizations</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
