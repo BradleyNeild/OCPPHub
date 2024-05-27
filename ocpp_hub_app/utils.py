@@ -22,6 +22,10 @@ def register_client(name, client_id, client_secret):
     except IntegrityError as e:
         print(f"Error registering client '{name}': {e}")
 
-# Register clients (example usage)
-register_client(name='Tesla', client_id='tesla-client-id', client_secret='tesla-client-secret')
-register_client(name='PG&E', client_id='pge-client-id', client_secret='pge-client-secret')
+import string
+import random
+
+def generate_auth_key(length=32):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    auth_key = ''.join(random.choice(characters) for _ in range(length))
+    return auth_key

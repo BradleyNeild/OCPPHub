@@ -5,4 +5,4 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 8001
-CMD ["python", "ocpp_hub_app/proxy.py"]
+CMD ["python", "proxy.py"]

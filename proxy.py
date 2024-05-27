@@ -5,6 +5,9 @@ import logging
 import json
 import requests
 from dotenv import load_dotenv
+from datetime import datetime
+from asgiref.sync import sync_to_async
+from django.db import models
 
 logger = logging.getLogger(__name__)
 
@@ -17,24 +20,32 @@ error_logger = logging.getLogger('error_logger')
 error_logger.setLevel(logging.ERROR)
 handler = logging.FileHandler('error.log')
 handler.setLevel(logging.ERROR)
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(levellevel)s - %(message)s')
 handler.setFormatter(formatter)
 error_logger.addHandler(handler)
 
+# Set up Django settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ocpp_hub_project.settings')
+import django
+django.setup()
+
+# Import models after setting up Django
+from ocpp_hub_app.models import Authorization, ChargePoint, LogEntry
+
 WEB_SERVICE_URL = os.getenv('WEB_SERVICE_URL')
-OAUTH2_CLIENT_ID = os.getenv('OAUTH2_PROXY_CLIENT_ID')
-OAUTH2_CLIENT_SECRET = os.getenv('OAUTH2_PROXY_CLIENT_SECRET')
+OAUTH2_PROXY_CLIENT_ID = os.getenv('OAUTH2_PROXY_CLIENT_ID')
+OAUTH2_PROXY_CLIENT_SECRET = os.getenv('OAUTH2_PROXY_CLIENT_SECRET')
 OAUTH2_TOKEN_URL = os.getenv('OAUTH2_TOKEN_URL')
 
-logging.info(f"Client ID: {OAUTH2_CLIENT_ID}")
-logging.info(f"Client Secret: {OAUTH2_CLIENT_SECRET}")
+logging.info(f"Client ID: {OAUTH2_PROXY_CLIENT_ID}")
+logging.info(f"Client Secret: {OAUTH2_PROXY_CLIENT_SECRET}")
 logging.info(f"Token URL: {OAUTH2_TOKEN_URL}")
 
 def get_access_token():
     data = {
         'grant_type': 'client_credentials',
-        'client_id': OAUTH2_CLIENT_ID,
-        'client_secret': OAUTH2_CLIENT_SECRET,
+        'client_id': OAUTH2_PROXY_CLIENT_ID,
+        'client_secret': OAUTH2_PROXY_CLIENT_SECRET,
         'scope': "proxy_access",
     }
     headers = {
@@ -47,37 +58,68 @@ def get_access_token():
         response.raise_for_status()
     return response.json().get('access_token')
 
-def update_chargepoint_status(chargepoint_id, status, access_token):
-    update_url = f"{WEB_SERVICE_URL}{chargepoint_id}/status/"
-    headers = {
-        'Authorization': f'Bearer {access_token}',
-        'Content-Type': 'application/json'
-    }
-    data = {'status': status}
-    try:
-        response = requests.patch(update_url, json=data, headers=headers)
-        if response.status_code == 200:
-            logger.info(f"Successfully updated status for ChargePoint {chargepoint_id} to {status}")
-        else:
-            logger.error(f"Failed to update status for ChargePoint {chargepoint_id}: {response.content.decode()}")
-    except Exception as e:
-        logger.error(f"Error updating status for ChargePoint {chargepoint_id}: {str(e)}")
+@sync_to_async
+def create_log_entry(chargepoint=None, authorization=None, event_type="INFO", message="", raw_message=""):
+    log_entry = LogEntry(chargepoint=chargepoint, authorization=authorization, event_type=event_type, message=message, raw_message=raw_message)
+    log_entry.save()
+    logger.info(f"Log entry created: {message}")
 
-def update_authorization_status(chargepoint_id, status, access_token):
+@sync_to_async
+def update_authorization_connection_status_sync(chargepoint_id, connection_status):
+    authorization = Authorization.objects.get(chargepoint_id=chargepoint_id)
+    authorization.connection_status = connection_status
+    authorization.save()
+    return authorization
+
+@sync_to_async
+def update_chargepoint_connection_status_sync(chargepoint_id, connection_status):
+    chargepoint = ChargePoint.objects.get(id=chargepoint_id)
+    chargepoint.connection_status = connection_status
+    chargepoint.save()
+    return chargepoint
+
+@sync_to_async
+def update_chargepoint_status_sync(chargepoint_id, status):
+    chargepoint = ChargePoint.objects.get(id=chargepoint_id)
+    chargepoint.status = status
+    chargepoint.save()
+    return chargepoint
+
+async def update_authorization_connection_status(chargepoint_id, connection_status, access_token):
     update_url = f"{WEB_SERVICE_URL}{chargepoint_id}/authorization_status/"
     headers = {
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
     }
-    data = {'status': status}
+    data = {'connection_status': connection_status}
     try:
         response = requests.patch(update_url, json=data, headers=headers)
         if response.status_code == 200:
-            logger.info(f"Successfully updated authorization status for ChargePoint {chargepoint_id} to {status}")
+            logger.info(f"Successfully updated authorization connection status for ChargePoint {chargepoint_id} to {connection_status}")
+            authorization = await update_authorization_connection_status_sync(chargepoint_id, connection_status)
+            await create_log_entry(authorization=authorization, event_type="INFO", message=f"Authorization connection status updated to {connection_status}")
         else:
-            logger.error(f"Failed to update authorization status for ChargePoint {chargepoint_id}: {response.content.decode()}")
+            logger.error(f"Failed to update authorization connection status for ChargePoint {chargepoint_id}: {response.content.decode()}")
     except Exception as e:
-        logger.error(f"Error updating authorization status for ChargePoint {chargepoint_id}: {str(e)}")
+        logger.error(f"Error updating authorization connection status for ChargePoint {chargepoint_id}: {str(e)}")
+
+async def update_chargepoint_connection_status(chargepoint_id, connection_status, access_token):
+    update_url = f"{WEB_SERVICE_URL}{chargepoint_id}/connection_status/"
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
+    data = {'connection_status': connection_status}
+    try:
+        response = requests.patch(update_url, json=data, headers=headers)
+        if response.status_code == 200:
+            logger.info(f"Successfully updated connection status for ChargePoint {chargepoint_id} to {connection_status}")
+            chargepoint = await update_chargepoint_connection_status_sync(chargepoint_id, connection_status)
+            await create_log_entry(chargepoint=chargepoint, event_type="INFO", message=f"ChargePoint connection status updated to {connection_status}")
+        else:
+            logger.error(f"Failed to update connection status for ChargePoint {chargepoint_id}: {response.content.decode()}")
+    except Exception as e:
+        logger.error(f"Error updating connection status for ChargePoint {chargepoint_id}: {str(e)}")
 
 async def exception_handler(chargepoint_websocket, exception, charger_id, access_token):
     if isinstance(exception, websockets.exceptions.InvalidStatusCode):
@@ -100,14 +142,14 @@ async def exception_handler(chargepoint_websocket, exception, charger_id, access
         error_logger.exception(f"Unexpected error: {str(exception)}")
         await chargepoint_websocket.close(code=1011, reason="Unexpected error occurred")
 
-    # Update the authorization status to "Disconnected"
-    update_authorization_status(charger_id, "Disconnected", access_token)
+    # Update the connection status to "Disconnected"
+    await update_chargepoint_connection_status(charger_id, "Disconnected", access_token)
+    await update_authorization_connection_status(charger_id, "Disconnected", access_token)
 
 async def proxy_handler(chargepoint_websocket, path):
     charger_id = path.strip('/')
     logging.info(f"Chargepoint connected: {chargepoint_websocket.remote_address}")
 
-    access_token = None  # Ensure access_token is defined
     try:
         # Obtain access token
         access_token = get_access_token()
@@ -139,21 +181,23 @@ async def proxy_handler(chargepoint_websocket, path):
         # Combine csms_url and cp_id
         websocket_url = f"{csms_url}/{cp_id}"
 
-        # Update authorization status to Connected
-        update_authorization_status(charger_id, 'Connected', access_token)
+        # Update authorization and chargepoint connection status to Connected
+        authorization = await sync_to_async(Authorization.objects.get)(chargepoint_id=charger_id)
+        await update_authorization_connection_status(charger_id, 'Connected', access_token)
+        await update_chargepoint_connection_status(charger_id, 'Connected', access_token)
 
         async with websockets.connect(websocket_url, subprotocols=['ocpp1.6']) as csms_websocket:
             logging.info(f"Connected to CSMS: {websocket_url}")
+            await create_log_entry(authorization=authorization, event_type="INFO", message=f"Connected to CSMS at {websocket_url}")
 
             async def forward_to_csms(message):
                 try:
                     parsed_message = json.loads(message)
+                    raw_message = message
                     logging.info(f"<- CP: {parsed_message}")
-                    await csms_websocket.send(message)
-                    logging.info(f"-> CSMS: {parsed_message}")
 
-                    # Check if the message is a StatusNotification
-                    if isinstance(parsed_message, list) and len(parsed_message) > 2:
+                    # Check if the message is a StatusNotification from the chargepoint
+                    if isinstance(parsed_message, list) and len(parsed_message) > 3:
                         message_type_id = parsed_message[0]
                         action = parsed_message[2] if message_type_id == 2 else None
                         payload = parsed_message[3] if len(parsed_message) > 3 else {}
@@ -161,8 +205,12 @@ async def proxy_handler(chargepoint_websocket, path):
                         if action == 'StatusNotification' and 'status' in payload:
                             status = payload['status']
                             logger.info(f"StatusNotification received with status: {status}")
-                            update_chargepoint_status(charger_id, status, access_token)
+                            chargepoint = await update_chargepoint_status_sync(charger_id, status)
+                            await create_log_entry(chargepoint=chargepoint, event_type="INFO", message=f"Status changed to {status}", raw_message=raw_message)
 
+                    await csms_websocket.send(message)
+                    logging.info(f"-> CSMS: {parsed_message}")
+                    await create_log_entry(authorization=authorization, event_type="INFO", message="Message sent to CSMS", raw_message=raw_message)
                 except json.JSONDecodeError as e:
                     error_logger.error(f"Invalid JSON message from chargepoint: {message}")
                     error_logger.error(f"JSON decode error: {str(e)}")
@@ -170,10 +218,11 @@ async def proxy_handler(chargepoint_websocket, path):
             async def forward_to_chargepoint(message):
                 try:
                     parsed_message = json.loads(message)
+                    raw_message = message
                     logging.info(f"<- CSMS: {parsed_message}")
-
                     await chargepoint_websocket.send(message)
                     logging.info(f"-> CP: {parsed_message}")
+                    await create_log_entry(authorization=authorization, event_type="INFO", message="Message received from CSMS", raw_message=raw_message)
                 except json.JSONDecodeError as e:
                     error_logger.error(f"Invalid JSON message from CSMS: {message}")
                     error_logger.error(f"JSON decode error: {str(e)}")
@@ -192,9 +241,10 @@ async def proxy_handler(chargepoint_websocket, path):
         await exception_handler(chargepoint_websocket, e, charger_id, access_token)
     finally:
         logging.info("Connection closed")
-        # Update authorization status to Disconnected if access_token is available
-        if access_token:
-            update_authorization_status(charger_id, 'Disconnected', access_token)
+        # Update authorization and chargepoint connection status to Disconnected
+        await update_authorization_connection_status(charger_id, 'Disconnected', access_token)
+        await update_chargepoint_connection_status(charger_id, 'Disconnected', access_token)
+        await create_log_entry(authorization=authorization, event_type="INFO", message="Disconnected from CSMS")
 
 import socket
 

@@ -2,9 +2,10 @@ from django.urls import path, re_path, include
 from .views import (
     oauth_login, oauth_callback, TokenEndpoint, ApiEndpoint,
     setup_ocpp_configuration, get_meter_values, list_chargepoints, set_ocpp_credentials, get_chargepoint_details,
-    status_page, update_chargepoint_status, authorization_create, authorization_list, resend_verification_email,
+    status_page, update_chargepoint_status, update_chargepoint_connection_status, authorization_create, authorization_list, resend_verification_email,
     profile_view, delete_account, dashboard, landing, register, activate, authorization_edit, authorization_delete, profile,
-    chargepoint_create, chargepoint_delete, chargepoint_edit, chargepoint_list, update_authorization_status
+    chargepoint_create, chargepoint_delete, chargepoint_edit, chargepoint_list, update_authorization_connection_status,
+    chargepoint_log, authorization_log, generate_auth_key_view, chargepoint_log_list, authorization_log_list
 )
 from django.contrib.auth import views as auth_views
 
@@ -35,7 +36,13 @@ urlpatterns = [
     re_path(r'^chargepoints/(?P<chargepoint_pk>[0-9a-f-]+)/authorizations/(?P<auth_pk>\d+)/edit/$', authorization_edit, name='authorization_edit'),
     re_path(r'^chargepoints/(?P<chargepoint_pk>[0-9a-f-]+)/authorizations/(?P<auth_pk>\d+)/delete/$', authorization_delete, name='authorization_delete'),
     re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/status/$', update_chargepoint_status, name='update_chargepoint_status'),
-    re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/authorization_status/$', update_authorization_status, name='update_authorization_status'),
+    re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/connection_status/$', update_chargepoint_connection_status, name='update_chargepoint_connection_status'),
+    re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/authorization_status/$', update_authorization_connection_status, name='update_authorization_connection_status'),
+    path('chargepoints/<pk>/log/', chargepoint_log, name='chargepoint_log'),
+    path('generate-auth-key/', generate_auth_key_view, name='generate_auth_key'),
+    path('chargepoints/logs/', chargepoint_log_list, name='chargepoint_log_list'),
+    path('authorizations/<pk>/log/', authorization_log, name='authorization_log'),
+    path('authorizations/logs/', authorization_log_list, name='authorization_log_list'),
     path('delete-account/', delete_account, name='delete_account'),
     path('status/', status_page, name='status_page'),
     path('accounts/', include('allauth.urls')),

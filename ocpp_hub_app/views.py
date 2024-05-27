@@ -71,11 +71,17 @@ def register(request):
     else:
         logger.warning("GET request received for registration")
         form = UserRegistrationForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'account/register.html', {'form': form})
 
+from .utils import generate_auth_key
 
+from django.views.decorators.csrf import ensure_csrf_cookie
 
-
+@login_required
+@ensure_csrf_cookie
+def generate_auth_key_view(request):
+    auth_key = generate_auth_key()
+    return JsonResponse({'auth_key': auth_key})
 
 def activate(request, uidb64, token):
     try:
@@ -97,21 +103,21 @@ def activate(request, uidb64, token):
         return redirect('dashboard')
     else:
         logger.warning(f"Invalid activation link for UID: {uid} and token: {token}")
-        return render(request, 'activation_invalid.html')
+        return render(request, 'account/activation_invalid.html')
 
 @login_required
 def profile(request):
     if request.method == 'POST':
         # handle profile update logic
         pass
-    return render(request, 'profile.html')
+    return render(request, 'account/profile.html')
 
 @login_required
 def profile_view(request):
     email_address = EmailAddress.objects.filter(user=request.user, primary=True).first()
     is_verified = email_address.verified if email_address else False
 
-    return render(request, 'profile.html', {
+    return render(request, 'account/profile.html', {
         'user': request.user,
         'email': email_address.email if email_address else '',
         'is_verified': is_verified,
@@ -129,9 +135,9 @@ def dashboard(request):
     # Collect status information
     status_info = {
         'total_chargepoints': chargepoints.count(),
-        'active_chargepoints': chargepoints.filter(status='Active').count(),
-        'inactive_chargepoints': chargepoints.filter(status='Inactive').count(),
         'total_authorizations': authorizations.count(),
+        'connected_authorizations': authorizations.filter(connection_status='Connected').count(),
+        'disconnected_authorizations': authorizations.filter(connection_status='Disconnected').count(),
     }
     
     context = {
@@ -141,6 +147,8 @@ def dashboard(request):
     }
     
     return render(request, 'dashboard.html', context)
+
+
 # OAuth Views
 @login_required
 def oauth_login(request):
@@ -199,6 +207,34 @@ class ApiEndpoint(ProtectedResourceView):
 
 from rest_framework import status as http_status
 
+from .models import ChargePoint, Authorization, LogEntry
+
+from django.shortcuts import render, get_object_or_404
+from .models import ChargePoint, Authorization, LogEntry
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def chargepoint_log_list(request):
+    chargepoints = ChargePoint.objects.filter(user=request.user)
+    return render(request, 'chargepoint/chargepoint_log_list.html', {'chargepoints': chargepoints})
+
+@login_required
+def authorization_log_list(request):
+    authorizations = Authorization.objects.filter(chargepoint__user=request.user)
+    return render(request, 'authorization/authorization_log_list.html', {'authorizations': authorizations})
+
+@login_required
+def chargepoint_log(request, pk):
+    chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
+    logs = LogEntry.objects.filter(chargepoint=chargepoint).order_by('-timestamp')
+    return render(request, 'chargepoint/chargepoint_log.html', {'chargepoint': chargepoint, 'logs': logs})
+
+@login_required
+def authorization_log(request, pk):
+    authorization = get_object_or_404(Authorization, pk=pk)
+    logs = LogEntry.objects.filter(authorization=authorization).order_by('-timestamp')
+    return render(request, 'authorization/authorization_log.html', {'authorization': authorization, 'logs': logs})
+
 @api_view(['PATCH'])
 @permission_classes([IsProxyOrOwner])
 def update_chargepoint_status(request, id):
@@ -220,18 +256,34 @@ def update_chargepoint_status(request, id):
 
 @api_view(['PATCH'])
 @permission_classes([IsProxyOrOwner])
-def update_authorization_status(request, id):
+def update_chargepoint_connection_status(request, id):
     chargepoint = get_object_or_404(ChargePoint, pk=id)
-    new_status = request.data.get('status')
+    new_connection_status = request.data.get('connection_status')
 
     valid_statuses = ['Connected', 'Disconnected']
 
-    if new_status not in valid_statuses:
-        return Response({'error': 'Invalid status'}, status=http_status.HTTP_400_BAD_REQUEST)
+    if new_connection_status not in valid_statuses:
+        return Response({'error': 'Invalid connection_status'}, status=http_status.HTTP_400_BAD_REQUEST)
+
+    chargepoint.connection_status = new_connection_status
+    chargepoint.save()
+
+    return Response({'status': 'success'}, status=http_status.HTTP_200_OK)
+
+@api_view(['PATCH'])
+@permission_classes([IsProxyOrOwner])
+def update_authorization_connection_status(request, id):
+    chargepoint = get_object_or_404(ChargePoint, pk=id)
+    new_connection_status = request.data.get('connection_status')
+
+    valid_statuses = ['Connected', 'Disconnected']
+
+    if new_connection_status not in valid_statuses:
+        return Response({'error': 'Invalid connection_status'}, status=http_status.HTTP_400_BAD_REQUEST)
 
     authorization = Authorization.objects.filter(chargepoint=chargepoint).first()
     if authorization:
-        authorization.status = new_status
+        authorization.connection_status = new_connection_status
         authorization.save()
     else:
         return Response({'error': 'Authorization not found'}, status=http_status.HTTP_404_NOT_FOUND)
@@ -239,15 +291,15 @@ def update_authorization_status(request, id):
     return Response({'status': 'success'}, status=http_status.HTTP_200_OK)
 
 
+
 # Charge Point Management
 @login_required
 @method_scopes({'GET': ['chargepoints:read']})
 def chargepoint_list(request):
     chargepoints = ChargePoint.objects.filter(user=request.user)
-    return render(request, 'chargepoint_list.html', {'chargepoints': chargepoints})
+    return render(request, 'chargepoint/chargepoint_list.html', {'chargepoints': chargepoints})
 
 @login_required
-@method_scopes({'POST': ['chargepoints:write']})
 def chargepoint_create(request):
     if request.method == 'POST':
         form = ChargePointForm(request.POST)
@@ -258,10 +310,9 @@ def chargepoint_create(request):
             return redirect('chargepoint_list')
     else:
         form = ChargePointForm()
-    return render(request, 'chargepoint_form.html', {'form': form})
+    return render(request, 'chargepoint/chargepoint_form.html', {'form': form, 'is_edit': False})
 
 @login_required
-@method_scopes({'POST': ['chargepoints:write']})
 def chargepoint_edit(request, pk):
     chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -271,7 +322,8 @@ def chargepoint_edit(request, pk):
             return redirect('chargepoint_list')
     else:
         form = ChargePointForm(instance=chargepoint)
-    return render(request, 'chargepoint_form.html', {'form': form})
+    return render(request, 'chargepoint/chargepoint_form.html', {'form': form, 'is_edit': True})
+
 
 @login_required
 @method_scopes({'POST': ['chargepoints:write']})
@@ -280,7 +332,7 @@ def chargepoint_delete(request, pk):
     if request.method == 'POST':
         chargepoint.delete()
         return redirect('chargepoint_list')
-    return render(request, 'chargepoint_confirm_delete.html', {'chargepoint': chargepoint})
+    return render(request, 'chargepoint/chargepoint_confirm_delete.html', {'chargepoint': chargepoint})
 
 # Authorization Management
 @login_required
@@ -288,10 +340,10 @@ def chargepoint_delete(request, pk):
 def authorization_list(request, pk):
     chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
     authorizations = Authorization.objects.filter(chargepoint=chargepoint)
-    return render(request, 'authorization_list.html', {'authorizations': authorizations, 'chargepoint': chargepoint})
+    return render(request, 'authorization/authorization_list.html', {'authorizations': authorizations, 'chargepoint': chargepoint})
 
 @login_required
-@method_scopes({'POST': ['chargepoints:write']})
+@permission_classes([IsProxyOrOwner])
 def authorization_create(request, pk):
     chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -303,10 +355,10 @@ def authorization_create(request, pk):
             return redirect('authorization_list', pk=pk)
     else:
         form = AuthorizationForm()
-    return render(request, 'authorization_form.html', {'form': form, 'chargepoint': chargepoint})
+    return render(request, 'authorization/authorization_form.html', {'form': form, 'chargepoint': chargepoint})
 
 @login_required
-@method_scopes({'POST': ['chargepoints:write']})
+@permission_classes([IsProxyOrOwner])
 def authorization_edit(request, chargepoint_pk, auth_pk):
     chargepoint = get_object_or_404(ChargePoint, pk=chargepoint_pk, user=request.user)
     authorization = get_object_or_404(Authorization, pk=auth_pk, chargepoint=chargepoint)
@@ -315,19 +367,22 @@ def authorization_edit(request, chargepoint_pk, auth_pk):
         if form.is_valid():
             form.save()
             return redirect('authorization_list', pk=chargepoint_pk)
+        else:
+            logger.warning(f"Authorization form is invalid: {form.errors}")
     else:
         form = AuthorizationForm(instance=authorization)
-    return render(request, 'authorization_form.html', {'form': form, 'chargepoint': chargepoint})
+    return render(request, 'authorization/authorization_form.html', {'form': form, 'chargepoint': chargepoint})
+
 
 @login_required
-@method_scopes({'POST': ['chargepoints:write']})
+@permission_classes([IsProxyOrOwner])
 def authorization_delete(request, chargepoint_pk, auth_pk):
     chargepoint = get_object_or_404(ChargePoint, pk=chargepoint_pk, user=request.user)
     authorization = get_object_or_404(Authorization, pk=auth_pk, chargepoint=chargepoint)
     if request.method == 'POST':
         authorization.delete()
         return redirect('authorization_list', pk=chargepoint_pk)
-    return render(request, 'authorization_confirm_delete.html', {'authorization': authorization, 'chargepoint': chargepoint})
+    return render(request, 'authorization/authorization_confirm_delete.html', {'authorization': authorization, 'chargepoint': chargepoint})
 
 # OCPP Configuration
 @login_required
@@ -514,7 +569,7 @@ def send_verification_email(request, user):
         mail_subject = 'Activate your account.'
         activation_link = f"http://{current_site.domain}{reverse('activate', kwargs={'uidb64': uid, 'token': token})}"
         logger.warning(f"Generated activation link for user {user.username}: {activation_link}")
-        message = render_to_string('activate_email.html', {
+        message = render_to_string('account/activate_email.html', {
             'user': user,
             'activation_link': activation_link,
         })
@@ -529,8 +584,10 @@ def send_verification_email(request, user):
         logger.warning(f"Activation email sent to {user.email}")
     except Exception as e:
         logger.error(f"Failed to send activation email to {user.email}: {str(e)}")
+
 from .forms import ResendVerificationEmailForm
 from django.contrib import messages
+
 def resend_verification_email(request):
     if request.method == 'POST':
         form = ResendVerificationEmailForm(request.POST)

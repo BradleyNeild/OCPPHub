@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}{% if is_edit %}Edit{% else %}Create{% endif %} Charge Point{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card mt-5">
+        <div class="card-header">
+            <h1 class="h5">{% if is_edit %}Edit{% else %}Create{% endif %} Charge Point</h1>
+        </div>
+        <div class="card-body">
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.name.label_tag }}
+                        {{ form.name|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.location.label_tag }}
+                        {{ form.location|add_class:"form-control" }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">{% if is_edit %}Update{% else %}Create{% endif %}</button>
+                <a href="{% url 'chargepoint_list' %}" class="btn btn-secondary">Back to Charge Points</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

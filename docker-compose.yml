@@ -22,11 +22,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.proxy
-    command: python ocpp_hub_app/proxy.py
+    command: python proxy.py
     volumes:
       - .:/app
     ports:
       - "8001:8001"
+      - "8003:8003"  # Added port for aiohttp server
     networks:
       - ocpp_network
     env_file:

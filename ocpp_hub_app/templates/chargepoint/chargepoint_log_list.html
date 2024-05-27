@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Charge Point Logs{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">Charge Point Logs</h1>
+    <ul class="list-group mt-3">
+        {% for chargepoint in chargepoints %}
+        <li class="list-group-item">
+            <a href="{% url 'chargepoint_log' chargepoint.pk %}">{{ chargepoint.name }}</a>
+            <span class="badge badge-primary badge-pill">{{ chargepoint.logentry_set.count }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+

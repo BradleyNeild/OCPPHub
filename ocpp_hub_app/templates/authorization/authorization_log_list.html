@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Authorization Logs{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">Authorization Logs</h1>
+    <ul class="list-group mt-3">
+        {% for authorization in authorizations %}
+        <li class="list-group-item">
+            <a href="{% url 'authorization_log' authorization.pk %}">{{ authorization.csms_name }}</a>
+            <span class="badge badge-primary badge-pill">{{ authorization.logentry_set.count }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+

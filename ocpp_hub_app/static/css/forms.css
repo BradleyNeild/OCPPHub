@@ -1,0 +1,9 @@
+/* Ensure all form inputs have the same height */
+.form-control {
+    height: calc(2.25rem + 2px);
+}
+
+/* Add some margin to buttons to make them more visually appealing */
+.btn {
+    margin-top: 1rem;
+}

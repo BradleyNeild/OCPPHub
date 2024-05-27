@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Authorization{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">{% if form.instance.pk %}Edit{% else %}Create{% endif %} Authorization for {{ chargepoint.name }}</h1>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                {{ form.csms_name.label_tag }}
+                {{ form.csms_name|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.connect_url.label_tag }}
+                {{ form.connect_url|add_class:"form-control" }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                {{ form.cp_id.label_tag }}
+                {{ form.cp_id|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6 mb-3">
+                {{ form.auth_key.label_tag }}
+                <div class="input-group">
+                    {{ form.auth_key|add_class:"form-control" }}
+                    <div class="input-group-append">
+                        <button id="generate-auth-key" type="button" class="btn btn-outline-secondary">Generate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                {{ form.sec_prof.label_tag }}
+                {{ form.sec_prof|add_class:"form-control" }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Update{% else %}Create{% endif %}</button>
+        <a href="{% url 'authorization_list' chargepoint.pk %}" class="btn btn-secondary">Back to Authorizations</a>
+    </form>
+</div>
+
+<script>
+document.getElementById('generate-auth-key').addEventListener('click', function() {
+    fetch("{% url 'generate_auth_key' %}", {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('{{ form.auth_key.id_for_label }}').value = data.auth_key;
+    });
+});
+</script>
+{% endblock %}
