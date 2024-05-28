@@ -62,7 +62,7 @@ def get_access_token():
 def create_log_entry(chargepoint=None, authorization=None, event_type="INFO", message="", raw_message=""):
     log_entry = LogEntry(chargepoint=chargepoint, authorization=authorization, event_type=event_type, message=message, raw_message=raw_message)
     log_entry.save()
-    logger.info(f"Log entry created: {message}")
+    logger.info(f"Log entry created: {message} | Raw message: {raw_message}")
 
 @sync_to_async
 def update_authorization_connection_status_sync(chargepoint_id, connection_status):
@@ -142,10 +142,6 @@ async def exception_handler(chargepoint_websocket, exception, charger_id, access
         error_logger.exception(f"Unexpected error: {str(exception)}")
         await chargepoint_websocket.close(code=1011, reason="Unexpected error occurred")
 
-    # Update the connection status to "Disconnected"
-    await update_chargepoint_connection_status(charger_id, "Disconnected", access_token)
-    await update_authorization_connection_status(charger_id, "Disconnected", access_token)
-
 async def proxy_handler(chargepoint_websocket, path):
     charger_id = path.strip('/')
     logging.info(f"Chargepoint connected: {chargepoint_websocket.remote_address}")
@@ -188,12 +184,12 @@ async def proxy_handler(chargepoint_websocket, path):
 
         async with websockets.connect(websocket_url, subprotocols=['ocpp1.6']) as csms_websocket:
             logging.info(f"Connected to CSMS: {websocket_url}")
-            await create_log_entry(authorization=authorization, event_type="INFO", message=f"Connected to CSMS at {websocket_url}")
+            await create_log_entry(authorization=authorization, event_type="INFO", message=f"Connected to CSMS at {websocket_url}", raw_message="")
 
             async def forward_to_csms(message):
+                raw_message = message  # Capture the raw message before processing
                 try:
                     parsed_message = json.loads(message)
-                    raw_message = message
                     logging.info(f"<- CP: {parsed_message}")
 
                     # Check if the message is a StatusNotification from the chargepoint
@@ -212,20 +208,22 @@ async def proxy_handler(chargepoint_websocket, path):
                     logging.info(f"-> CSMS: {parsed_message}")
                     await create_log_entry(authorization=authorization, event_type="INFO", message="Message sent to CSMS", raw_message=raw_message)
                 except json.JSONDecodeError as e:
-                    error_logger.error(f"Invalid JSON message from chargepoint: {message}")
+                    error_logger.error(f"Invalid JSON message from chargepoint: {raw_message}")
                     error_logger.error(f"JSON decode error: {str(e)}")
+                    await create_log_entry(authorization=authorization, event_type="ERROR", message="Invalid JSON from chargepoint", raw_message=raw_message)
 
             async def forward_to_chargepoint(message):
+                raw_message = message  # Capture the raw message before processing
                 try:
                     parsed_message = json.loads(message)
-                    raw_message = message
                     logging.info(f"<- CSMS: {parsed_message}")
                     await chargepoint_websocket.send(message)
                     logging.info(f"-> CP: {parsed_message}")
                     await create_log_entry(authorization=authorization, event_type="INFO", message="Message received from CSMS", raw_message=raw_message)
                 except json.JSONDecodeError as e:
-                    error_logger.error(f"Invalid JSON message from CSMS: {message}")
+                    error_logger.error(f"Invalid JSON message from CSMS: {raw_message}")
                     error_logger.error(f"JSON decode error: {str(e)}")
+                    await create_log_entry(authorization=authorization, event_type="ERROR", message="Invalid JSON from CSMS", raw_message=raw_message)
 
             async def handle_csms_messages():
                 async for message in csms_websocket:
@@ -244,7 +242,7 @@ async def proxy_handler(chargepoint_websocket, path):
         # Update authorization and chargepoint connection status to Disconnected
         await update_authorization_connection_status(charger_id, 'Disconnected', access_token)
         await update_chargepoint_connection_status(charger_id, 'Disconnected', access_token)
-        await create_log_entry(authorization=authorization, event_type="INFO", message="Disconnected from CSMS")
+        await create_log_entry(authorization=authorization, event_type="INFO", message="Disconnected from CSMS", raw_message="")
 
 import socket
 

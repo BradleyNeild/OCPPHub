@@ -60,6 +60,7 @@
                 <th>Location</th>
                 <th>Status</th>
                 <th>Connection</th>
+                <th>ID</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -70,6 +71,7 @@
                 <td>{{ chargepoint.location }}</td>
                 <td>{{ chargepoint.status }}</td>
                 <td>{{ chargepoint.connection_status }}</td>
+                <td>{{ chargepoint.id }}</td>
                 <td>
                     <a href="{% url 'chargepoint_edit' chargepoint.pk %}" class="btn btn-sm btn-primary">Edit</a>
                     <a href="{% url 'chargepoint_delete' chargepoint.pk %}" class="btn btn-sm btn-danger">Delete</a>
@@ -90,6 +92,7 @@
                 <th>CSMS Name</th>
                 <th>Connect URL</th>
                 <th>Charge Point</th>
+                <th>Chargepoint ID</th>
                 <th>Connection</th>
                 <th>Actions</th>
             </tr>
@@ -100,6 +103,7 @@
                 <td>{{ authorization.csms_name }}</td>
                 <td>{{ authorization.connect_url }}</td>
                 <td>{{ authorization.chargepoint.name }}</td>
+                <td>{{ authorization.cp_id }}</td>
                 <td>{{ authorization.connection_status }}</td>
                 <td>
                     <a href="{% url 'authorization_edit' authorization.chargepoint.pk authorization.pk %}" class="btn btn-sm btn-primary">Edit</a>

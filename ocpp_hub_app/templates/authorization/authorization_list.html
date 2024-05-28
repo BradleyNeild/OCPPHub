@@ -10,8 +10,10 @@
         <thead>
             <tr>
                 <th>CSMS Name</th>
-                <th>Status</th>
                 <th>Connect URL</th>
+                <th>Charge Point</th>
+                <th>Chargepoint ID</th>
+                <th>Connection</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,11 +21,16 @@
             {% for authorization in authorizations %}
             <tr>
                 <td>{{ authorization.csms_name }}</td>
-                <td>{{ authorization.status }}</td>
                 <td>{{ authorization.connect_url }}</td>
+                <td>{{ authorization.chargepoint.name }}</td>
+                <td>{{ authorization.cp_id }}</td>
+                <td>{{ authorization.connection_status }}</td>
                 <td>
                     <a href="{% url 'authorization_edit' chargepoint.pk authorization.pk %}" class="btn btn-sm btn-primary">Edit</a>
                     <a href="{% url 'authorization_delete' chargepoint.pk authorization.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="{% url 'authorization_log' authorization.pk %}" class="btn btn-sm btn-secondary">
+                        View Logs <span class="badge badge-light">{{ authorization.logentry_set.count }}</span>
+                    </a>
                 </td>
             </tr>
             {% endfor %}

@@ -12,6 +12,9 @@
                 <th>Name</th>
                 <th>Location</th>
                 <th>Status</th>
+                <th>Connection</th>
+                <th>ID</th>
+
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,10 +24,16 @@
                 <td>{{ chargepoint.name }}</td>
                 <td>{{ chargepoint.location }}</td>
                 <td>{{ chargepoint.status }}</td>
+                <td>{{ chargepoint.connection_status }}</td>
+                <td>{{ chargepoint.id }}</td>
+
                 <td>
                     <a href="{% url 'chargepoint_edit' chargepoint.pk %}" class="btn btn-sm btn-primary">Edit</a>
                     <a href="{% url 'chargepoint_delete' chargepoint.pk %}" class="btn btn-sm btn-danger">Delete</a>
                     <a href="{% url 'authorization_list' chargepoint.pk %}" class="btn btn-sm btn-info">Manage Authorizations</a>
+                    <a href="{% url 'chargepoint_log' chargepoint.pk %}" class="btn btn-sm btn-secondary">
+                        View Logs <span class="badge badge-light">{{ chargepoint.logentry_set.count }}</span>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
