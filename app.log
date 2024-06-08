@@ -1,0 +1,190 @@
+18:38:46 - INFO     - connection_manager.py - reconnect_redis - Connected to Redis at redis://redis:6379
+18:38:46 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:38:51 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:38:56 - INFO     - connection_manager.py - initialize_rabbitmq - Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+18:38:56 - INFO     - proxy.py - main - Starting proxy server on IP address: 172.19.0.3
+18:38:56 - INFO     - proxy.py - main - WebSocket proxy server started
+18:38:59 - INFO     - proxy.py - proxy_handler - Chargepoint connected: ('172.19.0.10', 33420)
+18:38:59 - INFO     - proxy_utils.py - get_access_token - Requesting access token with data (attempt 1/5)
+18:38:59 - INFO     - proxy.py - proxy_handler - Access token obtained: z8Oetep2OU8HeVPJBewEAe5vK3K4bd
+18:38:59 - INFO     - connection_manager.py - add_chargepoint_connection - Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:38:59 - INFO     - connection_manager.py - add_chargepoint_connection - Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:38:59 - INFO     - connection_manager.py - connect_to_csms - Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:38:59 - INFO     - connection_manager.py - add_csms_connection - Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:38:59 - INFO     - connection_manager.py - add_csms_connection - Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+18:38:59 - INFO     - connection_manager.py - connect_to_csms - Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:38:59 - INFO     - connection_manager.py - handle_csms_messages - Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:39:28 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000032","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:50:24.554Z"}]
+18:39:28 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Available | Raw message: [2,"1000032","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:50:24.554Z"}]
+18:39:28 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000032","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:50:24.554Z"}]
+18:39:28 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000032","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:50:24.554Z"}]
+18:39:28 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000032",{}]
+18:39:28 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000032",{}]
+18:39:28 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000032",{}]
+18:39:28 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000032",{}]
+18:39:29 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000033","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T00:50:25.192Z"}]
+18:39:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Preparing | Raw message: [2,"1000033","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T00:50:25.192Z"}]
+18:39:29 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000033","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T00:50:25.192Z"}]
+18:39:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000033","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T00:50:25.192Z"}]
+18:39:29 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000033",{}]
+18:39:29 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000033",{}]
+18:39:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000033",{}]
+18:39:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000033",{}]
+18:39:30 - INFO     - proxy.py - shutdown - Received exit signal SIGTERM...
+18:39:30 - INFO     - proxy.py - proxy_handler - Chargepoint connection closed
+18:39:30 - INFO     - connection_manager.py - remove_chargepoint_connection - Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:39:30 - INFO     - connection_manager.py - remove_chargepoint_connection - Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:39:42 - INFO     - connection_manager.py - reconnect_redis - Connected to Redis at redis://redis:6379
+18:39:42 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:39:47 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:39:52 - INFO     - connection_manager.py - initialize_rabbitmq - Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+18:39:52 - INFO     - proxy.py - main - Starting proxy server on IP address: 172.19.0.3
+18:39:52 - INFO     - proxy.py - main - WebSocket proxy server started
+18:40:00 - INFO     - proxy.py - proxy_handler - Chargepoint connected: ('172.19.0.10', 40468)
+18:40:00 - INFO     - proxy_utils.py - get_access_token - Requesting access token with data (attempt 1/5)
+18:40:00 - INFO     - proxy.py - proxy_handler - Access token obtained: bwbHcssTrUnOsLj6GuHp3aLLUwczC4
+18:40:00 - INFO     - connection_manager.py - add_chargepoint_connection - Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:40:00 - INFO     - connection_manager.py - add_chargepoint_connection - Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:40:00 - INFO     - connection_manager.py - connect_to_csms - Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:40:00 - INFO     - connection_manager.py - add_csms_connection - Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:40:00 - INFO     - connection_manager.py - add_csms_connection - Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+18:40:00 - INFO     - connection_manager.py - connect_to_csms - Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:40:00 - INFO     - connection_manager.py - handle_csms_messages - Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:41:25 - INFO     - proxy.py - shutdown - Received exit signal SIGTERM...
+18:41:25 - INFO     - proxy.py - proxy_handler - Chargepoint connection closed
+18:41:25 - INFO     - connection_manager.py - remove_chargepoint_connection - Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:41:25 - INFO     - connection_manager.py - remove_chargepoint_connection - Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:41:32 - INFO     - connection_manager.py - reconnect_redis - Connected to Redis at redis://redis:6379
+18:41:32 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:41:37 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:41:42 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:41:47 - INFO     - connection_manager.py - initialize_rabbitmq - Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+18:41:47 - INFO     - proxy.py - main - Starting proxy server on IP address: 172.19.0.3
+18:41:47 - INFO     - proxy.py - main - WebSocket proxy server started
+18:41:55 - INFO     - proxy.py - proxy_handler - Chargepoint connected: ('172.19.0.10', 39522)
+18:41:55 - INFO     - proxy_utils.py - get_access_token - Requesting access token with data (attempt 1/5)
+18:41:55 - INFO     - proxy.py - proxy_handler - Access token obtained: luXXW2UthjhESd2fqswPgelXrP2dfk
+18:41:55 - INFO     - connection_manager.py - add_chargepoint_connection - Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:41:55 - INFO     - connection_manager.py - add_chargepoint_connection - Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:41:55 - INFO     - connection_manager.py - connect_to_csms - Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:41:55 - INFO     - connection_manager.py - add_csms_connection - Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:41:55 - INFO     - connection_manager.py - add_csms_connection - Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+18:41:55 - INFO     - connection_manager.py - connect_to_csms - Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:41:55 - INFO     - connection_manager.py - handle_csms_messages - Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:41:59 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000034","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:52:55.507Z"}]
+18:41:59 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Available | Raw message: [2,"1000034","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:52:55.507Z"}]
+18:41:59 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000034","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:52:55.507Z"}]
+18:41:59 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000034",{}]
+18:41:59 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000034",{}]
+18:41:59 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000034","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T00:52:55.507Z"}]
+18:41:59 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000034",{}]
+18:41:59 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000034",{}]
+18:50:03 - INFO     - proxy.py - shutdown - Received exit signal SIGTERM...
+18:50:03 - INFO     - proxy.py - proxy_handler - Chargepoint connection closed
+18:50:03 - INFO     - connection_manager.py - remove_chargepoint_connection - Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:50:03 - INFO     - connection_manager.py - remove_chargepoint_connection - Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:50:11 - INFO     - connection_manager.py - reconnect_redis - Connected to Redis at redis://redis:6379
+18:50:11 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:50:16 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:50:21 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:50:26 - INFO     - connection_manager.py - initialize_rabbitmq - Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+18:50:26 - INFO     - proxy.py - main - Starting proxy server on IP address: 172.19.0.3
+18:50:26 - INFO     - proxy.py - main - WebSocket proxy server started
+18:50:33 - INFO     - proxy.py - proxy_handler - Chargepoint connected: ('172.19.0.10', 44394)
+18:50:33 - INFO     - proxy_utils.py - get_access_token - Requesting access token with data (attempt 1/5)
+18:50:33 - INFO     - proxy.py - proxy_handler - Access token obtained: 79p7oMfzRDKp4QLQixDMlt51nMTDZN
+18:50:33 - INFO     - connection_manager.py - add_chargepoint_connection - Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:50:33 - INFO     - connection_manager.py - add_chargepoint_connection - Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:50:33 - INFO     - connection_manager.py - connect_to_csms - Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:50:33 - INFO     - connection_manager.py - add_csms_connection - Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:50:33 - INFO     - connection_manager.py - add_csms_connection - Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+18:50:33 - INFO     - connection_manager.py - connect_to_csms - Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:50:33 - INFO     - connection_manager.py - handle_csms_messages - Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:50:52 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000035","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:01:48.943Z"}]
+18:50:52 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Preparing | Raw message: [2,"1000035","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:01:48.943Z"}]
+18:50:52 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000035","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:01:48.943Z"}]
+18:50:52 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000035",{}]
+18:50:52 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000035",{}]
+18:50:52 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000035","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:01:48.943Z"}]
+18:50:52 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000035",{}]
+18:50:52 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000035",{}]
+18:51:26 - INFO     - connection_manager.py - close_authorization_connection - Closing authorization connection: 93b78148-199d-44df-9751-1ff71aaa7cab
+18:51:26 - ERROR    - connection_manager.py - close_authorization_connection - Error handling request to close authorization: You cannot call this from an async context - use a thread or sync_to_async.
+18:56:44 - INFO     - proxy.py - shutdown - Received exit signal SIGTERM...
+18:56:44 - INFO     - proxy.py - proxy_handler - Chargepoint connection closed
+18:56:44 - INFO     - connection_manager.py - remove_chargepoint_connection - Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:56:44 - INFO     - connection_manager.py - remove_chargepoint_connection - Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:56:54 - INFO     - connection_manager.py - reconnect_redis - Connected to Redis at redis://redis:6379
+18:56:54 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:57:00 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:57:05 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:57:10 - INFO     - connection_manager.py - initialize_rabbitmq - Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+18:57:10 - INFO     - proxy.py - main - Starting proxy server on IP address: 172.19.0.3
+18:57:10 - INFO     - proxy.py - main - WebSocket proxy server started
+18:57:14 - INFO     - proxy.py - proxy_handler - Chargepoint connected: ('172.19.0.10', 37228)
+18:57:14 - INFO     - proxy_utils.py - get_access_token - Requesting access token with data (attempt 1/5)
+18:57:15 - INFO     - proxy.py - proxy_handler - Access token obtained: vhcS1qkuh4R2FTL7M5endmjecL8bAd
+18:57:15 - INFO     - connection_manager.py - add_chargepoint_connection - Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:57:15 - INFO     - connection_manager.py - add_chargepoint_connection - Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:57:15 - INFO     - connection_manager.py - connect_to_csms - Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:57:18 - ERROR    - connection_manager.py - connect_to_csms - Failed to connect to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.223:8180/steve/websocket/CentralSystemService/CP1: [Errno 113] Connect call failed ('172.19.0.223', 8180)
+18:57:18 - INFO     - connection_manager.py - remove_csms_connection - Removing CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:57:24 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000036","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:20.513Z"}]
+18:57:24 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Available | Raw message: [2,"1000036","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:20.513Z"}]
+18:57:24 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000036","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:20.513Z"}]
+18:57:24 - WARNING  - connection_manager.py - send_to_csms - No CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, message not sent
+18:57:48 - INFO     - connection_manager.py - close_authorization_connection - Closing authorization connection: 93b78148-199d-44df-9751-1ff71aaa7cab
+18:57:48 - ERROR    - connection_manager.py - close_authorization_connection - Error handling request to close authorization: You cannot call this from an async context - use a thread or sync_to_async.
+18:57:53 - INFO     - proxy.py - shutdown - Received exit signal SIGTERM...
+18:57:53 - INFO     - proxy.py - proxy_handler - Chargepoint connection closed
+18:57:53 - INFO     - connection_manager.py - remove_chargepoint_connection - Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:57:53 - INFO     - connection_manager.py - remove_chargepoint_connection - Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:58:00 - INFO     - connection_manager.py - reconnect_redis - Connected to Redis at redis://redis:6379
+18:58:00 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:58:05 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:58:10 - ERROR    - connection_manager.py - initialize_rabbitmq - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+18:58:15 - INFO     - connection_manager.py - initialize_rabbitmq - Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+18:58:15 - INFO     - proxy.py - main - Starting proxy server on IP address: 172.19.0.3
+18:58:15 - INFO     - proxy.py - main - WebSocket proxy server started
+18:58:23 - INFO     - proxy.py - proxy_handler - Chargepoint connected: ('172.19.0.10', 40872)
+18:58:23 - INFO     - proxy_utils.py - get_access_token - Requesting access token with data (attempt 1/5)
+18:58:23 - INFO     - proxy.py - proxy_handler - Access token obtained: iehV1dZxGWuyznWk05OBhfTS4PTtC5
+18:58:23 - INFO     - connection_manager.py - add_chargepoint_connection - Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:58:23 - INFO     - connection_manager.py - add_chargepoint_connection - Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:58:23 - INFO     - connection_manager.py - connect_to_csms - Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:58:23 - INFO     - connection_manager.py - add_csms_connection - Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+18:58:23 - INFO     - connection_manager.py - add_csms_connection - Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+18:58:23 - INFO     - connection_manager.py - connect_to_csms - Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:58:23 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000036","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:20.513Z"}]
+18:58:23 - INFO     - connection_manager.py - handle_csms_messages - Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Available | Raw message: [2,"1000036","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:20.513Z"}]
+18:58:23 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000036","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:20.513Z"}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000036","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:20.513Z"}]
+18:58:23 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000036",{}]
+18:58:23 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000036",{}]
+18:58:23 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000037","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:08:26.036Z"}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000036",{}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000036",{}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Preparing | Raw message: [2,"1000037","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:08:26.036Z"}]
+18:58:23 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000037","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:08:26.036Z"}]
+18:58:23 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000037",{}]
+18:58:23 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000037",{}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000037","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:08:26.036Z"}]
+18:58:23 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000038","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:26.880Z"}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000037",{}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000037",{}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Available | Raw message: [2,"1000038","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:26.880Z"}]
+18:58:23 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000038","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:26.880Z"}]
+18:58:23 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000038",{}]
+18:58:23 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000038",{}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000038","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:08:26.880Z"}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000038",{}]
+18:58:23 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000038",{}]
+18:58:29 - INFO     - connection_manager.py - process_message_from_chargepoint - <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000039","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:09:25.548Z"}]
+18:58:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Status changed to Preparing | Raw message: [2,"1000039","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:09:25.548Z"}]
+18:58:29 - INFO     - connection_manager.py - send_to_csms - -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000039","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:09:25.548Z"}]
+18:58:29 - INFO     - connection_manager.py - handle_csms_messages - <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000039",{}]
+18:58:29 - INFO     - connection_manager.py - send_to_chargepoint - -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000039",{}]
+18:58:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000039","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:09:25.548Z"}]
+18:58:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000039",{}]
+18:58:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000039",{}]

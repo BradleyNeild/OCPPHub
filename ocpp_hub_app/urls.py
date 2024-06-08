@@ -1,11 +1,11 @@
-from django.urls import path, re_path, include
+from django.urls import path, include
 from .views import (
     oauth_login, oauth_callback, TokenEndpoint, ApiEndpoint,
-    setup_ocpp_configuration, get_meter_values, list_chargepoints, set_ocpp_credentials, get_chargepoint_details,
+    setup_ocpp_configuration, get_meter_values, list_chargepoints, get_chargepoint_details,
     status_page, update_chargepoint_status, update_chargepoint_connection_status, authorization_create, authorization_list, resend_verification_email,
     profile_view, delete_account, dashboard, landing, register, activate, authorization_edit, authorization_delete, profile,
     chargepoint_create, chargepoint_delete, chargepoint_edit, chargepoint_list, update_authorization_connection_status,
-    chargepoint_log, authorization_log, generate_auth_key_view, chargepoint_log_list, authorization_log_list
+    chargepoint_log, authorization_log, generate_auth_key_view, chargepoint_log_list, authorization_log_list, dashboard_data
 )
 from django.contrib.auth import views as auth_views
 
@@ -18,8 +18,7 @@ urlpatterns = [
     path('api/setup_ocpp_configuration/', setup_ocpp_configuration, name='setup_ocpp_configuration'),
     path('api/get_meter_values/', get_meter_values, name='get_meter_values'),
     path('api/v1/chargepoints/', list_chargepoints, name='list_chargepoints'),
-    re_path(r'^api/v1/chargepoints/(?P<pk>[0-9a-f-]+)/credentials/$', set_ocpp_credentials, name='set_ocpp_credentials'),
-    re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/details/$', get_chargepoint_details, name='get_chargepoint_details'),
+    path('api/v1/chargepoints/<uuid:uuid>/details/', get_chargepoint_details, name='get_chargepoint_details'),
     path('register/', register, name='register'),
     path('dashboard/', dashboard, name='dashboard'),
     path('activate/<uidb64>/<token>/', activate, name='activate'),
@@ -28,20 +27,21 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('chargepoints/', chargepoint_list, name='chargepoint_list'),
+    path('dashboard/data/', dashboard_data, name='dashboard_data'),
     path('chargepoints/new/', chargepoint_create, name='chargepoint_create'),
-    re_path(r'^chargepoints/(?P<pk>[0-9a-f-]+)/edit/$', chargepoint_edit, name='chargepoint_edit'),
-    re_path(r'^chargepoints/(?P<pk>[0-9a-f-]+)/delete/$', chargepoint_delete, name='chargepoint_delete'),
-    re_path(r'^chargepoints/(?P<pk>[0-9a-f-]+)/authorizations/$', authorization_list, name='authorization_list'),
-    re_path(r'^chargepoints/(?P<pk>[0-9a-f-]+)/authorizations/new/$', authorization_create, name='authorization_create'),
-    re_path(r'^chargepoints/(?P<chargepoint_pk>[0-9a-f-]+)/authorizations/(?P<auth_pk>\d+)/edit/$', authorization_edit, name='authorization_edit'),
-    re_path(r'^chargepoints/(?P<chargepoint_pk>[0-9a-f-]+)/authorizations/(?P<auth_pk>\d+)/delete/$', authorization_delete, name='authorization_delete'),
-    re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/status/$', update_chargepoint_status, name='update_chargepoint_status'),
-    re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/connection_status/$', update_chargepoint_connection_status, name='update_chargepoint_connection_status'),
-    re_path(r'^api/v1/chargepoints/(?P<id>[0-9a-f-]+)/authorization_status/$', update_authorization_connection_status, name='update_authorization_connection_status'),
-    path('chargepoints/<pk>/log/', chargepoint_log, name='chargepoint_log'),
+    path('chargepoints/<uuid:uuid>/edit/', chargepoint_edit, name='chargepoint_edit'),
+    path('chargepoints/<uuid:uuid>/delete/', chargepoint_delete, name='chargepoint_delete'),
+    path('chargepoints/<uuid:uuid>/authorizations/', authorization_list, name='authorization_list'),
+    path('chargepoints/<uuid:uuid>/authorizations/new/', authorization_create, name='authorization_create'),
+    path('chargepoints/<uuid:chargepoint_uuid>/authorizations/<uuid:auth_uuid>/edit/', authorization_edit, name='authorization_edit'),
+    path('chargepoints/<uuid:chargepoint_uuid>/authorizations/<uuid:auth_uuid>/delete/', authorization_delete, name='authorization_delete'),
+    path('api/v1/chargepoints/<uuid:uuid>/status/', update_chargepoint_status, name='update_chargepoint_status'),
+    path('api/v1/chargepoints/<uuid:uuid>/connection_status/', update_chargepoint_connection_status, name='update_chargepoint_connection_status'),
+    path('api/v1/authorizations/<uuid:uuid>/connection_status/', update_authorization_connection_status, name='update_authorization_connection_status'),
+    path('chargepoints/<uuid:uuid>/log/', chargepoint_log, name='chargepoint_log'),
     path('generate-auth-key/', generate_auth_key_view, name='generate_auth_key'),
     path('chargepoints/logs/', chargepoint_log_list, name='chargepoint_log_list'),
-    path('authorizations/<pk>/log/', authorization_log, name='authorization_log'),
+    path('authorizations/<uuid:uuid>/log/', authorization_log, name='authorization_log'),
     path('authorizations/logs/', authorization_log_list, name='authorization_log_list'),
     path('delete-account/', delete_account, name='delete_account'),
     path('status/', status_page, name='status_page'),
@@ -49,3 +49,4 @@ urlpatterns = [
     path('profile/', profile_view, name='profile_view'),
     path('resend-verification-email/', resend_verification_email, name='resend_verification_email'),
 ]
+

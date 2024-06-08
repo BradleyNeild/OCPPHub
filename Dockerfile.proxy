@@ -4,5 +4,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
-EXPOSE 8001
+EXPOSE 8998
+EXPOSE 8999
 CMD ["python", "proxy.py"]

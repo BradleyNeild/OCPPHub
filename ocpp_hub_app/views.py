@@ -24,20 +24,16 @@ from oauth2_provider.views.generic import ProtectedResourceView
 from requests_oauthlib import OAuth2Session
 from allauth.account.models import EmailAddress
 import requests
+import os
 import logging
 from .models import OAuthToken, ChargePoint, Profile, Authorization
 from .forms import UserRegistrationForm, ChargePointForm, AuthorizationForm
 from .serializers import ChargePointSerializer, OCPPCredentialsSerializer
 from .permissions import TokenHasScopeForMethod
+from allauth.account.utils import send_email_confirmation
 from .decorators import method_scopes
 
 logger = logging.getLogger(__name__)
-from django.shortcuts import render, redirect
-from allauth.account.forms import SignupForm
-from allauth.account.models import EmailAddress
-from allauth.account.utils import send_email_confirmation
-import logging
-
 
 @csrf_protect
 def register(request):
@@ -148,6 +144,73 @@ def dashboard(request):
     
     return render(request, 'dashboard.html', context)
 
+import json
+from uuid import UUID
+
+# Function to notify the proxy server to close the authorization connection
+def notify_proxy_server_close(authorization_uuid):
+    proxy_url = os.getenv('PROXY_SERVER_URL')
+    close_endpoint = f"{proxy_url}/api/close_authorization"
+    try:
+        response = requests.post(close_endpoint, json={'authorization_uuid': str(authorization_uuid)})
+        if response.status_code == 200:
+            logger.info(f"Successfully notified proxy server to close authorization {authorization_uuid}")
+        else:
+            logger.error(f"Failed to notify proxy server to close authorization {authorization_uuid}: {response.content.decode()}")
+    except Exception as e:
+        logger.error(f"Error notifying proxy server to close authorization {authorization_uuid}: {str(e)}")
+
+
+
+# Authorization Management
+@login_required
+@permission_classes([IsProxyOrOwner])
+def authorization_create(request, uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid, user=request.user)
+    if request.method == 'POST':
+        form = AuthorizationForm(request.POST)
+        if form.is_valid():
+            authorization = form.save(commit=False)
+            authorization.chargepoint = chargepoint
+            authorization.save()
+
+            # Notify proxy server to reconnect with new authorization details
+            notify_proxy_server_close(authorization.uuid)
+
+            return redirect('authorization_list', uuid=uuid)
+    else:
+        form = AuthorizationForm()
+    return render(request, 'authorization/authorization_form.html', {'form': form, 'chargepoint': chargepoint})
+
+@login_required
+@permission_classes([IsProxyOrOwner])
+def authorization_edit(request, chargepoint_uuid, auth_uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=chargepoint_uuid, user=request.user)
+    authorization = get_object_or_404(Authorization, uuid=auth_uuid, chargepoint=chargepoint)
+    if request.method == 'POST':
+        form = AuthorizationForm(request.POST, instance=authorization)
+        if form.is_valid():
+            form.save()
+
+            # Notify proxy server to reconnect with updated details
+            notify_proxy_server_close(authorization.uuid)
+
+            return redirect('authorization_list', uuid=chargepoint_uuid)
+        else:
+            logger.warning(f"Authorization form is invalid: {form.errors}")
+    else:
+        form = AuthorizationForm(instance=authorization)
+    return render(request, 'authorization/authorization_form.html', {'form': form, 'chargepoint': chargepoint})
+
+@login_required
+@permission_classes([IsProxyOrOwner])
+def authorization_delete(request, chargepoint_uuid, auth_uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=chargepoint_uuid, user=request.user)
+    authorization = get_object_or_404(Authorization, uuid=auth_uuid, chargepoint=chargepoint)
+    if request.method == 'POST':
+        authorization.delete()
+        return redirect('authorization_list', uuid=chargepoint_uuid)
+    return render(request, 'authorization/authorization_confirm_delete.html', {'authorization': authorization, 'chargepoint': chargepoint})
 
 # OAuth Views
 @login_required
@@ -210,7 +273,6 @@ from rest_framework import status as http_status
 from .models import ChargePoint, Authorization, LogEntry
 
 from django.shortcuts import render, get_object_or_404
-from .models import ChargePoint, Authorization, LogEntry
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -224,21 +286,21 @@ def authorization_log_list(request):
     return render(request, 'authorization/authorization_log_list.html', {'authorizations': authorizations})
 
 @login_required
-def chargepoint_log(request, pk):
-    chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
+def chargepoint_log(request, uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid, user=request.user)
     logs = LogEntry.objects.filter(chargepoint=chargepoint).order_by('-timestamp')
     return render(request, 'chargepoint/chargepoint_log.html', {'chargepoint': chargepoint, 'logs': logs})
 
 @login_required
-def authorization_log(request, pk):
-    authorization = get_object_or_404(Authorization, pk=pk)
+def authorization_log(request, uuid):
+    authorization = get_object_or_404(Authorization, uuid=uuid)
     logs = LogEntry.objects.filter(authorization=authorization).order_by('-timestamp')
     return render(request, 'authorization/authorization_log.html', {'authorization': authorization, 'logs': logs})
 
 @api_view(['PATCH'])
 @permission_classes([IsProxyOrOwner])
-def update_chargepoint_status(request, id):
-    chargepoint = get_object_or_404(ChargePoint, pk=id)
+def update_chargepoint_status(request, uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid)
     new_status = request.data.get('status')
 
     valid_statuses = [
@@ -256,8 +318,8 @@ def update_chargepoint_status(request, id):
 
 @api_view(['PATCH'])
 @permission_classes([IsProxyOrOwner])
-def update_chargepoint_connection_status(request, id):
-    chargepoint = get_object_or_404(ChargePoint, pk=id)
+def update_chargepoint_connection_status(request, uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid)
     new_connection_status = request.data.get('connection_status')
 
     valid_statuses = ['Connected', 'Disconnected']
@@ -272,8 +334,8 @@ def update_chargepoint_connection_status(request, id):
 
 @api_view(['PATCH'])
 @permission_classes([IsProxyOrOwner])
-def update_authorization_connection_status(request, id):
-    chargepoint = get_object_or_404(ChargePoint, pk=id)
+def update_authorization_connection_status(request, uuid):
+    authorization = get_object_or_404(Authorization, uuid=uuid)
     new_connection_status = request.data.get('connection_status')
 
     valid_statuses = ['Connected', 'Disconnected']
@@ -281,16 +343,10 @@ def update_authorization_connection_status(request, id):
     if new_connection_status not in valid_statuses:
         return Response({'error': 'Invalid connection_status'}, status=http_status.HTTP_400_BAD_REQUEST)
 
-    authorization = Authorization.objects.filter(chargepoint=chargepoint).first()
-    if authorization:
-        authorization.connection_status = new_connection_status
-        authorization.save()
-    else:
-        return Response({'error': 'Authorization not found'}, status=http_status.HTTP_404_NOT_FOUND)
+    authorization.connection_status = new_connection_status
+    authorization.save()
 
     return Response({'status': 'success'}, status=http_status.HTTP_200_OK)
-
-
 
 # Charge Point Management
 @login_required
@@ -307,82 +363,74 @@ def chargepoint_create(request):
             chargepoint = form.save(commit=False)
             chargepoint.user = request.user
             chargepoint.save()
-            return redirect('chargepoint_list')
+            return redirect('dashboard')
     else:
         form = ChargePointForm()
     return render(request, 'chargepoint/chargepoint_form.html', {'form': form, 'is_edit': False})
 
 @login_required
-def chargepoint_edit(request, pk):
-    chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
+def chargepoint_edit(request, uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid, user=request.user)
     if request.method == 'POST':
         form = ChargePointForm(request.POST, instance=chargepoint)
         if form.is_valid():
             form.save()
-            return redirect('chargepoint_list')
+            return redirect('dashboard')
     else:
         form = ChargePointForm(instance=chargepoint)
     return render(request, 'chargepoint/chargepoint_form.html', {'form': form, 'is_edit': True})
 
-
 @login_required
 @method_scopes({'POST': ['chargepoints:write']})
-def chargepoint_delete(request, pk):
-    chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
+def chargepoint_delete(request, uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid, user=request.user)
     if request.method == 'POST':
         chargepoint.delete()
-        return redirect('chargepoint_list')
+        return redirect('dashboard')
     return render(request, 'chargepoint/chargepoint_confirm_delete.html', {'chargepoint': chargepoint})
 
-# Authorization Management
-@login_required
-@method_scopes({'GET': ['chargepoints:read']})
-def authorization_list(request, pk):
-    chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
-    authorizations = Authorization.objects.filter(chargepoint=chargepoint)
-    return render(request, 'authorization/authorization_list.html', {'authorizations': authorizations, 'chargepoint': chargepoint})
+from django.http import JsonResponse
 
 @login_required
-@permission_classes([IsProxyOrOwner])
-def authorization_create(request, pk):
-    chargepoint = get_object_or_404(ChargePoint, pk=pk, user=request.user)
-    if request.method == 'POST':
-        form = AuthorizationForm(request.POST)
-        if form.is_valid():
-            authorization = form.save(commit=False)
-            authorization.chargepoint = chargepoint
-            authorization.save()
-            return redirect('authorization_list', pk=pk)
-    else:
-        form = AuthorizationForm()
-    return render(request, 'authorization/authorization_form.html', {'form': form, 'chargepoint': chargepoint})
-
-@login_required
-@permission_classes([IsProxyOrOwner])
-def authorization_edit(request, chargepoint_pk, auth_pk):
-    chargepoint = get_object_or_404(ChargePoint, pk=chargepoint_pk, user=request.user)
-    authorization = get_object_or_404(Authorization, pk=auth_pk, chargepoint=chargepoint)
-    if request.method == 'POST':
-        form = AuthorizationForm(request.POST, instance=authorization)
-        if form.is_valid():
-            form.save()
-            return redirect('authorization_list', pk=chargepoint_pk)
-        else:
-            logger.warning(f"Authorization form is invalid: {form.errors}")
-    else:
-        form = AuthorizationForm(instance=authorization)
-    return render(request, 'authorization/authorization_form.html', {'form': form, 'chargepoint': chargepoint})
-
-
-@login_required
-@permission_classes([IsProxyOrOwner])
-def authorization_delete(request, chargepoint_pk, auth_pk):
-    chargepoint = get_object_or_404(ChargePoint, pk=chargepoint_pk, user=request.user)
-    authorization = get_object_or_404(Authorization, pk=auth_pk, chargepoint=chargepoint)
-    if request.method == 'POST':
-        authorization.delete()
-        return redirect('authorization_list', pk=chargepoint_pk)
-    return render(request, 'authorization/authorization_confirm_delete.html', {'authorization': authorization, 'chargepoint': chargepoint})
+def dashboard_data(request):
+    user = request.user
+    chargepoints = ChargePoint.objects.filter(user=user)
+    authorizations = Authorization.objects.filter(chargepoint__user=user)
+    
+    chargepoints_data = []
+    for cp in chargepoints:
+        chargepoints_data.append({
+            'name': cp.name,
+            'location': cp.location,
+            'status': cp.status,
+            'connection_status': cp.connection_status,
+            'uuid': str(cp.uuid),
+            'edit_url': reverse('chargepoint_edit', args=[cp.uuid]),
+            'delete_url': reverse('chargepoint_delete', args=[cp.uuid]),
+            'manage_authorizations_url': reverse('authorization_list', args=[cp.uuid]),
+            'view_logs_url': reverse('chargepoint_log', args=[cp.uuid]),
+            'log_count': cp.logentry_set.count(),
+        })
+    
+    authorizations_data = []
+    for auth in authorizations:
+        authorizations_data.append({
+            'csms_name': auth.csms_name,
+            'connect_url': auth.connect_url,
+            'chargepoint_name': auth.chargepoint.name,
+            'cp_id': auth.cp_id,
+            'connection_status': auth.connection_status,
+            'edit_url': reverse('authorization_edit', args=[auth.chargepoint.uuid, auth.uuid]),
+            'delete_url': reverse('authorization_delete', args=[auth.chargepoint.uuid, auth.uuid]),
+            'view_logs_url': reverse('authorization_log', args=[auth.uuid]),
+            'log_count': auth.logentry_set.count(),
+        })
+    
+    data = {
+        'chargepoints': chargepoints_data,
+        'authorizations': authorizations_data,
+    }
+    return JsonResponse(data)
 
 # OCPP Configuration
 @login_required
@@ -411,15 +459,15 @@ def setup_ocpp_configuration(request):
         oauth_token = get_object_or_404(OAuthToken, user=user)
 
     logger.warning(f"OAuthToken: {oauth_token}")
-    charge_point_id = request.data.get('charge_point_id')
+    charge_point_uuid = request.data.get('charge_point_uuid')
     config_data = request.data.get('config')
 
-    if not charge_point_id or not config_data:
-        logger.warning("Missing charge point ID or configuration data")
-        return Response({'error': 'Charge point ID and configuration data are required'}, status=400)
+    if not charge_point_uuid or not config_data:
+        logger.warning("Missing charge point UUID or configuration data")
+        return Response({'error': 'Charge point UUID and configuration data are required'}, status=400)
 
     configuration_data = {
-        'charge_point_id': charge_point_id,
+        'charge_point_uuid': charge_point_uuid,
         'config': config_data,
     }
 
@@ -474,17 +522,17 @@ def get_meter_values(request):
     if not user.is_authenticated and 'client_credentials' in request.auth.token_type:
         pass  # Proceed without a user context for client credentials
 
-    charge_point_id = request.query_params.get('charge_point_id')
+    charge_point_uuid = request.query_params.get('charge_point_uuid')
 
-    if not charge_point_id:
-        logger.warning("Missing charge point ID")
-        return Response({'error': 'Charge point ID is required'}, status=400)
+    if not charge_point_uuid:
+        logger.warning("Missing charge point UUID")
+        return Response({'error': 'Charge point UUID is required'}, status=400)
 
-    meter_values = fetch_meter_values_from_csms(charge_point_id)
+    meter_values = fetch_meter_values_from_csms(charge_point_uuid)
     logger.warning(f"Meter values retrieved: {meter_values}")
     return Response({'meter_values': meter_values})
 
-def fetch_meter_values_from_csms(charge_point_id):
+def fetch_meter_values_from_csms(charge_point_uuid):
     return [{"timestamp": "2023-05-16T08:00:00Z", "value": 10.5}, {"timestamp": "2023-05-16T09:00:00Z", "value": 12.3}]
 
 # API Views for Charge Points
@@ -496,7 +544,7 @@ def list_chargepoints(request):
     chargepoints = ChargePoint.objects.filter(user=user)
     response_data = [
         {
-            "id": cp.id,
+            "uuid": str(cp.uuid),
             "name": cp.name,
             "status": cp.status,
             "location": cp.location
@@ -505,53 +553,42 @@ def list_chargepoints(request):
     ]
     return JsonResponse(response_data, safe=False)
 
+# Authorization Management
+@login_required
+@method_scopes({'GET': ['chargepoints:read']})
+def authorization_list(request, uuid):
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid, user=request.user)
+    authorizations = Authorization.objects.filter(chargepoint=chargepoint)
+    return render(request, 'authorization/authorization_list.html', {'authorizations': authorizations, 'chargepoint': chargepoint})
+
 @api_view(['GET'])
 @permission_classes([IsProxyOrOwner])
-def get_chargepoint_details(request, id):
-    logger.info(f"Fetching details for ChargePoint ID: {id}")
+def get_chargepoint_details(request, uuid):
+    logger.info(f"Fetching details for ChargePoint UUID: {uuid}")
 
-    chargepoint = get_object_or_404(ChargePoint, pk=id)
+    chargepoint = get_object_or_404(ChargePoint, uuid=uuid)
     
     # Fetch the authorization details associated with this chargepoint
-    authorization = Authorization.objects.filter(chargepoint=chargepoint).first()
-    if not authorization:
+    authorizations = Authorization.objects.filter(chargepoint=chargepoint)
+    if not authorizations:
         return Response({'error': 'Authorization details not found'}, status=404)
 
     # Access control is handled by the IsProxyOrOwner permission class
     data = {
-        "connect_url": authorization.connect_url,
-        "cp_id": authorization.cp_id,
-        "auth_key": authorization.auth_key,
-        "sec_prof": authorization.sec_prof,
+        "chargepoint_name": chargepoint.name,
+        "authorizations": [
+            {
+                "csms_name": auth.csms_name,
+                "connect_url": auth.connect_url,
+                "cp_id": auth.cp_id,
+                "auth_key": auth.auth_key,
+                "sec_prof": auth.sec_prof,
+            }
+            for auth in authorizations
+        ],
     }
     logger.info(f"ChargePoint details: {data}")
     return JsonResponse(data, status=200)
-
-@api_view(['POST'])
-@permission_classes([TokenHasScopeForMethod])
-@method_scopes({'POST': ['chargepoints:write']})
-def set_ocpp_credentials(request, id):
-    user = request.user
-    chargepoint = get_object_or_404(ChargePoint, id=id, user=user)
-
-    connect_url = request.data.get('connect_url')
-    cp_id = request.data.get('cp_id')
-    auth_key = request.data.get('auth_key')
-    sec_prof = request.data.get('sec_prof')
-
-    if not connect_url or not cp_id or not auth_key or not sec_prof:
-        logger.warning("Missing required fields in the request")
-        return JsonResponse({'error': 'All fields are required'}, status=400)
-
-    logger.warning(f"Setting OCPP credentials for ChargePoint ID: {id} with data: {request.data}")
-
-    chargepoint.connect_url = connect_url
-    chargepoint.cp_id = cp_id
-    chargepoint.auth_key = auth_key
-    chargepoint.sec_prof = sec_prof
-    chargepoint.save()
-
-    return JsonResponse({'message': 'Credentials set successfully'}, status=200)
 
 # Status Page
 @login_required
@@ -587,6 +624,49 @@ def send_verification_email(request, user):
 
 from .forms import ResendVerificationEmailForm
 from django.contrib import messages
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+import requests
+import os
+import json
+
+@csrf_exempt
+@require_POST
+def restart_authorization(request):
+    data = json.loads(request.body)
+    authorization_uuid = data.get('authorization_uuid')
+    
+    if not authorization_uuid:
+        return JsonResponse({'error': 'authorization_uuid is required'}, status=400)
+    
+    proxy_url = os.getenv('PROXY_SERVER_URL') + '/api/restart_authorization'
+    response = requests.post(proxy_url, json={'authorization_uuid': str(authorization_uuid)})
+    
+    if response.status_code == 200:
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'error': 'Failed to restart authorization'}, status=500)
+
+
+@csrf_exempt
+@require_POST
+def restart_chargepoint(request):
+    data = json.loads(request.body)
+    chargepoint_uuid = data.get('chargepoint_uuid')
+    
+    if not chargepoint_uuid:
+        return JsonResponse({'error': 'chargepoint_uuid is required'}, status=400)
+    
+    proxy_url = os.getenv('PROXY_SERVER_URL') + '/api/restart_chargepoint'
+    response = requests.post(proxy_url, json={'chargepoint_uuid': str(chargepoint_uuid)})
+    
+    if response.status_code == 200:
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'error': 'Failed to restart chargepoint'}, status=500)
+
 
 def resend_verification_email(request):
     if request.method == 'POST':

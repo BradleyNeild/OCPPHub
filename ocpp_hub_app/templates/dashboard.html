@@ -52,69 +52,121 @@
         </div>
     </div>
 
-    <h2 class="mt-5">Your Charge Points</h2>
-    <table class="table table-striped mt-3">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Connection</th>
-                <th>ID</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for chargepoint in chargepoints %}
-            <tr>
-                <td>{{ chargepoint.name }}</td>
-                <td>{{ chargepoint.location }}</td>
-                <td>{{ chargepoint.status }}</td>
-                <td>{{ chargepoint.connection_status }}</td>
-                <td>{{ chargepoint.id }}</td>
-                <td>
-                    <a href="{% url 'chargepoint_edit' chargepoint.pk %}" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="{% url 'chargepoint_delete' chargepoint.pk %}" class="btn btn-sm btn-danger">Delete</a>
-                    <a href="{% url 'authorization_list' chargepoint.pk %}" class="btn btn-sm btn-info">Manage Authorizations</a>
-                    <a href="{% url 'chargepoint_log' chargepoint.pk %}" class="btn btn-sm btn-secondary">
-                        View Logs <span class="badge badge-light">{{ chargepoint.logentry_set.count }}</span>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="d-flex justify-content-between align-items-center mt-5">
+        <h2>Your Charge Points</h2>
+        <a href="{% url 'chargepoint_create' %}" class="btn btn-success">Add Charge Point</a>
+        <button id="refresh-button" class="btn btn-secondary">Refresh</button>
+    </div>
+    <div id="chargepoints-section" class="table-responsive">
+        <!-- Chargepoints table will be dynamically loaded here -->
+    </div>
 
     <h2 class="mt-5">Your Authorizations</h2>
-    <table class="table table-striped mt-3">
-        <thead>
-            <tr>
-                <th>CSMS Name</th>
-                <th>Connect URL</th>
-                <th>Charge Point</th>
-                <th>Chargepoint ID</th>
-                <th>Connection</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for authorization in authorizations %}
-            <tr>
-                <td>{{ authorization.csms_name }}</td>
-                <td>{{ authorization.connect_url }}</td>
-                <td>{{ authorization.chargepoint.name }}</td>
-                <td>{{ authorization.cp_id }}</td>
-                <td>{{ authorization.connection_status }}</td>
-                <td>
-                    <a href="{% url 'authorization_edit' authorization.chargepoint.pk authorization.pk %}" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="{% url 'authorization_delete' authorization.chargepoint.pk authorization.pk %}" class="btn btn-sm btn-danger">Delete</a>
-                    <a href="{% url 'authorization_log' authorization.pk %}" class="btn btn-sm btn-secondary">
-                        View Logs <span class="badge badge-light">{{ authorization.logentry_set.count }}</span>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div id="authorizations-section" class="table-responsive">
+        <!-- Authorizations table will be dynamically loaded here -->
+    </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const refreshButton = document.getElementById("refresh-button");
+
+    function loadDashboardData() {
+        fetch("{% url 'dashboard_data' %}")
+            .then(response => response.json())
+            .then(data => {
+                const chargepointsSection = document.getElementById("chargepoints-section");
+                const authorizationsSection = document.getElementById("authorizations-section");
+
+                // Update Chargepoints table
+                let chargepointsHtml = `
+                    <table class="table table-striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Connection</th>
+                                <th>ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                data.chargepoints.forEach(chargepoint => {
+                    chargepointsHtml += `
+                        <tr>
+                            <td>${chargepoint.name}</td>
+                            <td>${chargepoint.location}</td>
+                            <td>${chargepoint.status}</td>
+                            <td>${chargepoint.connection_status}</td>
+                            <td>${chargepoint.uuid}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                <div class="d-flex justify-content-start mt-2">
+                                    <a href="${chargepoint.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
+                                    <a href="${chargepoint.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
+                                    <a href="${chargepoint.manage_authorizations_url}" class="btn btn-sm btn-info mr-2">Manage Authorizations</a>
+                                    <a href="${chargepoint.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${chargepoint.log_count}</span></a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                chargepointsHtml += `
+                        </tbody>
+                    </table>
+                `;
+                chargepointsSection.innerHTML = chargepointsHtml;
+
+                // Update Authorizations table
+                let authorizationsHtml = `
+                    <table class="table table-striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>CSMS Name</th>
+                                <th>Connect URL</th>
+                                <th>Charge Point</th>
+                                <th>Chargepoint ID</th>
+                                <th>Connection</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                data.authorizations.forEach(authorization => {
+                    authorizationsHtml += `
+                        <tr>
+                            <td>${authorization.csms_name}</td>
+                            <td>${authorization.connect_url}</td>
+                            <td>${authorization.chargepoint_name}</td>
+                            <td>${authorization.cp_id}</td>
+                            <td>${authorization.connection_status}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                <div class="d-flex justify-content-start mt-2">
+                                    <a href="${authorization.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
+                                    <a href="${authorization.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
+                                    <a href="${authorization.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${authorization.log_count}</span></a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                authorizationsHtml += `
+                        </tbody>
+                    </table>
+                `;
+                authorizationsSection.innerHTML = authorizationsHtml;
+            });
+    }
+
+    refreshButton.addEventListener("click", function() {
+        loadDashboardData();
+    });
+
+    // Initial load
+    loadDashboardData();
+});
+</script>
 {% endblock %}

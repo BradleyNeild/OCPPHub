@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class OAuthToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     access_token = models.CharField(max_length=255)
-    refresh_token = models.CharField(max_length=255, null=True, blank=True)  # Allow null and blank
+    refresh_token = models.CharField(max_length=255, null=True, blank=True)
     token_type = models.CharField(max_length=50)
     expires_in = models.IntegerField()
     scope = models.CharField(max_length=255)
@@ -21,10 +21,10 @@ class Profile(models.Model):
         return self.user.username
 
 class ChargePoint(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, verbose_name="Charge Point Name")
-    status = models.CharField(max_length=100, default="N/A", verbose_name="Status")  # StatusNotification kind of status
-    connection_status = models.CharField(max_length=100, default="Disconnected", verbose_name="Connection")  # New field for connection status
+    status = models.CharField(max_length=100, default="N/A", verbose_name="Status")
+    connection_status = models.CharField(max_length=100, default="Disconnected", verbose_name="Connection")
     location = models.CharField(max_length=100, verbose_name="Location")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -39,6 +39,7 @@ class ChargePoint(models.Model):
         )
 
 class Authorization(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     chargepoint = models.ForeignKey(ChargePoint, on_delete=models.CASCADE)
     csms_name = models.CharField(max_length=100, verbose_name="CSMS Name")
     connect_url = models.CharField(max_length=100, verbose_name="Connection URL")
@@ -58,14 +59,9 @@ class Authorization(models.Model):
         )
 
 class LogEntry(models.Model):
-    EVENT_TYPE_CHOICES = [
-        ('INFO', 'Information'),
-        ('ERROR', 'Error'),
-    ]
-
     chargepoint = models.ForeignKey(ChargePoint, on_delete=models.CASCADE, null=True, blank=True)
     authorization = models.ForeignKey(Authorization, on_delete=models.CASCADE, null=True, blank=True)
-    event_type = models.CharField(max_length=10, choices=EVENT_TYPE_CHOICES)
+    event_type = models.CharField(max_length=50)
     message = models.TextField()
     raw_message = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -76,4 +72,3 @@ class LogEntry(models.Model):
         if self.authorization:
             return f"[{self.timestamp}] Authorization {self.authorization.csms_name}: {self.message}"
         return f"[{self.timestamp}] Log: {self.message}"
-

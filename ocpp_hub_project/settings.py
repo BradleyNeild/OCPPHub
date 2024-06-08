@@ -111,8 +111,8 @@ OAUTH2_CLIENT_ID = env('OAUTH2_CLIENT_ID', default='default-client-id')  # Repla
 OAUTH2_CLIENT_SECRET = env('OAUTH2_CLIENT_SECRET', default='default-client-secret')  # Replace with the actual client secret for OCPPHub
 
 # OAuth2 provider URLs
-OAUTH2_AUTHORIZATION_URL = env('OAUTH2_AUTHORIZATION_URL', default='http://localhost:8002/o/authorize/')
-OAUTH2_TOKEN_URL = env('OAUTH2_TOKEN_URL', default='http://localhost:8002/o/token/')
+OAUTH2_AUTHORIZATION_URL = env('OAUTH2_AUTHORIZATION_URL', default='http://localhost:8997/o/authorize/')
+OAUTH2_TOKEN_URL = env('OAUTH2_TOKEN_URL', default='http://localhost:8997/o/token/')
 
 # Add the OAuth2 toolkit configurations
 OAUTH2_PROVIDER = {

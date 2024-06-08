@@ -1,4 +1,5 @@
 version: '3'
+
 networks:
   ocpp_network:
     external: true
@@ -8,13 +9,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.web
-    command: python manage.py runserver 0.0.0.0:8002
+    command: python manage.py runserver 0.0.0.0:8997
     volumes:
       - .:/app
     ports:
-      - "8002:8002"
+      - "8997:8997"
     networks:
-      - ocpp_network
+      ocpp_network:
+        ipv4_address: 172.19.0.2
     env_file:
       - .env
 
@@ -26,9 +28,31 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8001:8001"
-      - "8003:8003"  # Added port for aiohttp server
+      - "8998:8998"
+      - "8999:8999"  # Expose port for aiohttp server
     networks:
-      - ocpp_network
+      ocpp_network:
+        ipv4_address: 172.19.0.3
     env_file:
       - .env
+    depends_on:
+      - web
+      - rabbitmq
+      - redis
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      ocpp_network:
+        ipv4_address: 172.19.0.4
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      ocpp_network:
+        ipv4_address: 172.19.0.5

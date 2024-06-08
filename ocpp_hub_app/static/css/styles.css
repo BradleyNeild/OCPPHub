@@ -1,0 +1,83 @@
+/* General Button Styles */
+.btn {
+    border-radius: 4px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Filter Bar Styles */
+#filterBarButton {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    text-align: left;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #495057;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#filterBarButton:hover {
+    background-color: #e2e6ea;
+    color: #343a40;
+}
+
+.filters .btn {
+    min-width: 150px;
+    margin: 2px;
+    color: #fff;
+}
+
+.filters .btn-light {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #495057;
+}
+
+.filters .btn-light:hover {
+    background-color: #d6d8db;
+    border-color: #c6c8ca;
+    color: #343a40;
+}
+
+/* Table Styles */
+.table-fixed {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table-fixed thead th {
+    overflow: hidden;
+}
+
+.table-fixed tbody td {
+    overflow: hidden;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.card-body {
+    background-color: #ffffff;
+}
+
+.timestamp-cell {
+    display: flex;
+    flex-direction: column;
+}
