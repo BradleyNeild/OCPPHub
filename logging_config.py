@@ -4,6 +4,12 @@ from logging.handlers import RotatingFileHandler
 def configure_logging():
     """
     Configures logging for the application.
+    
+    Sets up rotating file handlers and console handlers for both application and error loggers.
+    The log files will rotate when they reach 10MB, with a maximum of 5 backup files.
+    
+    Returns:
+        tuple: A tuple containing the app logger and the error logger.
     """
     logger = logging.getLogger('app_logger')
     error_logger = logging.getLogger('error_logger')
@@ -12,7 +18,7 @@ def configure_logging():
         handler = RotatingFileHandler('app.log', maxBytes=10*1024*1024, backupCount=5)
         console_handler = logging.StreamHandler()
         
-        formatter = logging.Formatter('%(asctime)s - %(levelname)-8s - %(filename)s - %(funcName)s - %(message)s', datefmt='%H:%M:%S')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s\n      %(message)s\n', datefmt='%H:%M:%S')
         
         handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)

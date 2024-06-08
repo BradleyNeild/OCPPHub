@@ -188,3 +188,1731 @@
 18:58:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to CSMS | Raw message: [2,"1000039","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:09:25.548Z"}]
 18:58:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message received from CSMS | Raw message: [3,"1000039",{}]
 18:58:29 - INFO     - proxy_utils.py - create_log_entry - Log entry created: Message sent to Chargepoint | Raw message: [3,"1000039",{}]
+19:35:41 - INFO     - proxy.py - shutdown - Received exit signal SIGTERM...
+19:35:41 - INFO     - proxy.py - proxy_handler - Chargepoint connection closed
+19:35:41 - INFO     - connection_manager.py - remove_chargepoint_connection - Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:35:41 - INFO     - connection_manager.py - remove_chargepoint_connection - Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:35:50 - INFO     - connection_manager.py - reconnect_redis 
+ - Connected to Redis at redis://redis:6379
+19:35:50 - ERROR    - connection_manager.py - initialize_rabbitmq 
+ - Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+19:36:39 - INFO - connection_manager.py - reconnect_redis
+Connected to Redis at redis://redis:6379
+19:36:39 - ERROR - connection_manager.py - initialize_rabbitmq
+Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+19:36:44 - ERROR - connection_manager.py - initialize_rabbitmq
+Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+19:36:49 - INFO - connection_manager.py - initialize_rabbitmq
+Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+19:36:49 - INFO - proxy.py - main
+Starting proxy server on IP address: 172.19.0.3
+19:36:49 - INFO - proxy.py - main
+WebSocket proxy server started
+19:36:52 - INFO - proxy.py - proxy_handler
+Chargepoint connected: ('172.19.0.10', 52858)
+19:36:52 - INFO - proxy_utils.py - get_access_token
+Requesting access token with data (attempt 1/5)
+19:36:52 - INFO - proxy.py - proxy_handler
+Access token obtained: 9QiqULujpUAnz71r8qmz2TyX6hed0N
+19:36:52 - INFO - connection_manager.py - add_chargepoint_connection
+Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:36:52 - INFO - connection_manager.py - add_chargepoint_connection
+Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:36:52 - INFO - connection_manager.py - connect_to_csms
+Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+19:36:52 - INFO - connection_manager.py - add_csms_connection
+Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+19:36:52 - INFO - connection_manager.py - add_csms_connection
+Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+19:36:52 - INFO - connection_manager.py - connect_to_csms
+Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:36:52 - INFO - connection_manager.py - handle_csms_messages
+Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:36:59 - INFO - connection_manager.py - process_message_from_chargepoint
+<- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000040","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:47:55.567Z"}]
+19:36:59 - INFO - proxy_utils.py - create_log_entry
+Log entry created: Status changed to Available | Raw message: [2,"1000040","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:47:55.567Z"}]
+19:36:59 - INFO - connection_manager.py - send_to_csms
+-> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000040","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:47:55.567Z"}]
+19:36:59 - INFO - proxy_utils.py - create_log_entry
+Log entry created: Message sent to CSMS | Raw message: [2,"1000040","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:47:55.567Z"}]
+19:36:59 - INFO - connection_manager.py - handle_csms_messages
+<- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000040",{}]
+19:36:59 - INFO - connection_manager.py - send_to_chargepoint
+-> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000040",{}]
+19:36:59 - INFO - proxy_utils.py - create_log_entry
+Log entry created: Message received from CSMS | Raw message: [3,"1000040",{}]
+19:36:59 - INFO - proxy_utils.py - create_log_entry
+Log entry created: Message sent to Chargepoint | Raw message: [3,"1000040",{}]
+19:37:29 - INFO - proxy.py - shutdown
+Received exit signal SIGTERM...
+19:37:29 - INFO - proxy.py - proxy_handler
+Chargepoint connection closed
+19:37:29 - INFO - connection_manager.py - remove_chargepoint_connection
+Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:37:29 - INFO - connection_manager.py - remove_chargepoint_connection
+Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:37:42 - INFO - connection_manager.py - reconnect_redis
+      Connected to Redis at redis://redis:6379
+19:37:42 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+19:37:47 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+19:37:52 - INFO - connection_manager.py - initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+19:37:52 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+19:37:52 - INFO - proxy.py - main
+      WebSocket proxy server started
+19:38:00 - INFO - proxy.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 60422)
+19:38:00 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+19:38:00 - INFO - proxy.py - proxy_handler
+      Access token obtained: uoNf1fAwNQ08xvU11GO6cQZHDmIlTz
+19:38:00 - INFO - connection_manager.py - add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:38:00 - INFO - connection_manager.py - add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:38:00 - INFO - connection_manager.py - connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+19:38:00 - INFO - connection_manager.py - add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+19:38:00 - INFO - connection_manager.py - add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+19:38:00 - INFO - connection_manager.py - connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:38:00 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000041","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:48:43.263Z"}]
+19:38:00 - INFO - connection_manager.py - handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:38:00 - INFO - proxy_utils.py - create_log_entry
+      Log entry created: Status changed to Preparing | Raw message: [2,"1000041","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:48:43.263Z"}]
+19:38:00 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000041","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:48:43.263Z"}]
+19:38:00 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000041",{}]
+19:38:00 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000041",{}]
+19:38:00 - INFO - proxy_utils.py - create_log_entry
+      Log entry created: Message sent to CSMS | Raw message: [2,"1000041","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:48:43.263Z"}]
+19:38:00 - INFO - proxy_utils.py - create_log_entry
+      Log entry created: Message received from CSMS | Raw message: [3,"1000041",{}]
+19:38:00 - INFO - proxy_utils.py - create_log_entry
+      Log entry created: Message sent to Chargepoint | Raw message: [3,"1000041",{}]
+19:38:53 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+19:38:53 - INFO - proxy.py - proxy_handler
+      Chargepoint connection closed
+19:38:53 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:38:53 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:39:02 - INFO - connection_manager.py - reconnect_redis
+      Connected to Redis at redis://redis:6379
+19:39:02 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+19:39:07 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+19:39:12 - INFO - connection_manager.py - initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+19:39:12 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+19:39:12 - INFO - proxy.py - main
+      WebSocket proxy server started
+19:39:14 - INFO - proxy.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 41940)
+19:39:14 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+19:39:14 - INFO - proxy.py - proxy_handler
+      Access token obtained: xK5xnhlUmYWp1M9BGe8GWWOY0KtSug
+19:39:14 - INFO - connection_manager.py - add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:39:14 - INFO - connection_manager.py - add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:39:14 - INFO - connection_manager.py - connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+19:39:14 - INFO - connection_manager.py - add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+19:39:14 - INFO - connection_manager.py - add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+19:39:14 - INFO - connection_manager.py - connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:39:14 - INFO - connection_manager.py - handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:39:16 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000042","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:50:12.860Z"}]
+19:39:16 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000042","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:50:12.860Z"}]
+19:39:16 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000042",{}]
+19:39:16 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000042",{}]
+19:39:40 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+19:39:40 - INFO - proxy.py - proxy_handler
+      Chargepoint connection closed
+19:39:40 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:39:40 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+19:39:53 - INFO - connection_manager.py - reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+19:39:53 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+19:39:58 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+19:40:03 - INFO - connection_manager.py - initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+19:40:03 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+19:40:03 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+19:40:10 - INFO - proxy.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 33032)
+
+19:40:10 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+19:40:10 - INFO - proxy.py - proxy_handler
+      Access token obtained: U1gynkfqZLRNb7VQNYMumViCYV4O6t
+
+19:40:10 - INFO - connection_manager.py - add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:40:10 - INFO - connection_manager.py - add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:40:10 - INFO - connection_manager.py - connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+19:40:10 - INFO - connection_manager.py - add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+19:40:10 - INFO - connection_manager.py - add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+
+19:40:10 - INFO - connection_manager.py - connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:40:10 - INFO - connection_manager.py - handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:40:14 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000043","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:10.700Z"}]
+
+19:40:14 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000043","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:10.700Z"}]
+
+19:40:14 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000043",{}]
+
+19:40:14 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000043",{}]
+
+19:40:18 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000044","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:14.270Z"}]
+
+19:40:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000044","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:14.270Z"}]
+
+19:40:18 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000044",{}]
+
+19:40:18 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000044",{}]
+
+19:40:18 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000045","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:14.456Z"}]
+
+19:40:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000045","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:14.456Z"}]
+
+19:40:18 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000045",{}]
+
+19:40:18 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000045",{}]
+
+19:40:18 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000046","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:14.597Z"}]
+
+19:40:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000046","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:14.597Z"}]
+
+19:40:18 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000046",{}]
+
+19:40:18 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000046",{}]
+
+19:40:18 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000047","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:14.728Z"}]
+
+19:40:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000047","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:14.728Z"}]
+
+19:40:18 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000047",{}]
+
+19:40:18 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000047",{}]
+
+19:40:18 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000048","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:14.894Z"}]
+
+19:40:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000048","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:14.894Z"}]
+
+19:40:18 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000048",{}]
+
+19:40:18 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000048",{}]
+
+19:40:18 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000049","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:15.043Z"}]
+
+19:40:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000049","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:15.043Z"}]
+
+19:40:18 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000049",{}]
+
+19:40:18 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000049",{}]
+
+19:40:18 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000050","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:15.207Z"}]
+
+19:40:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000050","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:15.207Z"}]
+
+19:40:19 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000050",{}]
+
+19:40:19 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000050",{}]
+
+19:40:19 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000051","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:15.367Z"}]
+
+19:40:19 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000051","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:15.367Z"}]
+
+19:40:19 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000051",{}]
+
+19:40:19 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000051",{}]
+
+19:40:19 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000052","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:15.527Z"}]
+
+19:40:19 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000052","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:15.527Z"}]
+
+19:40:19 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000052",{}]
+
+19:40:19 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000052",{}]
+
+19:40:20 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000053","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.451Z"}]
+
+19:40:20 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000053","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.451Z"}]
+
+19:40:20 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000053",{}]
+
+19:40:20 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000053",{}]
+
+19:40:20 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000054","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.548Z"}]
+
+19:40:20 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000054","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.548Z"}]
+
+19:40:20 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000054",{}]
+
+19:40:20 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000054",{}]
+
+19:40:20 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000055","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.650Z"}]
+
+19:40:20 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000055","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.650Z"}]
+
+19:40:20 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000055",{}]
+
+19:40:20 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000055",{}]
+
+19:40:20 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000056","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.716Z"}]
+
+19:40:20 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000056","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.716Z"}]
+
+19:40:20 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000056",{}]
+
+19:40:20 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000056",{}]
+
+19:40:20 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000057","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.779Z"}]
+
+19:40:20 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000057","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.779Z"}]
+
+19:40:20 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000057",{}]
+
+19:40:20 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000057",{}]
+
+19:40:20 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000058","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.841Z"}]
+
+19:40:20 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000058","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.841Z"}]
+
+19:40:20 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000058",{}]
+
+19:40:20 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000058",{}]
+
+19:40:20 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000059","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.938Z"}]
+
+19:40:20 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000059","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:16.938Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000059",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000059",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000060","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.995Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000060","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:16.995Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000060",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000060",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000061","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.062Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000061","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.062Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000061",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000061",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000062","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.125Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000062","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.125Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000062",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000062",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000063","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.234Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000063","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.234Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000063",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000063",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000064","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.284Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000064","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.284Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000064",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000064",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000065","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.379Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000065","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.379Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000065",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000065",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000066","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.431Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000066","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.431Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000066",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000066",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000067","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.531Z"}]
+
+19:40:21 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000067","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.531Z"}]
+
+19:40:21 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000067",{}]
+
+19:40:21 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000067",{}]
+
+19:40:21 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000068","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.576Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000068","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.576Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000068",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000068",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000069","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.692Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000069","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.692Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000069",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000069",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000070","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.766Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000070","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.766Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000070",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000070",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000071","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.853Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000071","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:17.853Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000071",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000071",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000072","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.902Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000072","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:17.902Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000072",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000072",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000073","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.006Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000073","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.006Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000073",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000073",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000074","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:18.057Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000074","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:18.057Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000074",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000074",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000076","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:18.218Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000076","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:18.218Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000076",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000076",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000077","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.336Z"}]
+
+19:40:22 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000077","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.336Z"}]
+
+19:40:22 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000077",{}]
+
+19:40:22 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000077",{}]
+
+19:40:22 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000079","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.491Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000079","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.491Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000079",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000079",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000080","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:18.558Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000080","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:18.558Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000080",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000080",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000081","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.653Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000081","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.653Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000081",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000081",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000083","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.820Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000083","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.820Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000083",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000083",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000085","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.985Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000085","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:18.985Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000085",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000085",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000086","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.047Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000086","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.047Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000086",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000086",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000087","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.141Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000087","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.141Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000087",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000087",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000089","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.283Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000089","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.283Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000089",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000089",{}]
+
+19:40:23 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000090","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.363Z"}]
+
+19:40:23 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000090","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.363Z"}]
+
+19:40:23 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000090",{}]
+
+19:40:23 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000090",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000091","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.476Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000091","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.476Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000091",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000091",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000093","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.625Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000093","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.625Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000093",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000093",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000094","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.675Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000094","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.675Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000094",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000094",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000096","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.829Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000096","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:19.829Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000096",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000096",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000097","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.917Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000097","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:19.917Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000097",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000097",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000099","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.110Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000099","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.110Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000099",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000099",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000100","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.154Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000100","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.154Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000100",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000100",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000102","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.320Z"}]
+
+19:40:24 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000102","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.320Z"}]
+
+19:40:24 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000102",{}]
+
+19:40:24 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000102",{}]
+
+19:40:24 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000103","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.423Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000103","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.423Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000103",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000103",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000104","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.489Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000104","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.489Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000104",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000104",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000106","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.639Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000106","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.639Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000106",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000106",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000107","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.750Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000107","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.750Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000107",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000107",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000108","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.802Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000108","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.802Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000108",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000108",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000109","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.931Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000109","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:20.931Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000109",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000109",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000110","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.971Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000110","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:20.971Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000110",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000110",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000112","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.131Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000112","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.131Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000112",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000112",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000113","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:21.229Z"}]
+
+19:40:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000113","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:21.229Z"}]
+
+19:40:25 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000113",{}]
+
+19:40:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000113",{}]
+
+19:40:25 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000114","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.297Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000114","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.297Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000114",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000114",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000116","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.468Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000116","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.468Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000116",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000116",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000118","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.721Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000118","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.721Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000118",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000118",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000119","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:21.775Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000119","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:21.775Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000119",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000119",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000120","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.874Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000120","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:21.874Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000120",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000120",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000122","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.014Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000122","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.014Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000122",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000122",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000123","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.101Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000123","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.101Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000123",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000123",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000124","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.205Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000124","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.205Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000124",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000124",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000125","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.254Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000125","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.254Z"}]
+
+19:40:26 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000125",{}]
+
+19:40:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000125",{}]
+
+19:40:26 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000126","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.357Z"}]
+
+19:40:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000126","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.357Z"}]
+
+19:40:27 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000126",{}]
+
+19:40:27 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000126",{}]
+
+19:40:27 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000127","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.422Z"}]
+
+19:40:27 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000127","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.422Z"}]
+
+19:40:27 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000127",{}]
+
+19:40:27 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000127",{}]
+
+19:40:27 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000128","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.521Z"}]
+
+19:40:27 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000128","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.521Z"}]
+
+19:40:27 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000128",{}]
+
+19:40:27 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000128",{}]
+
+19:40:27 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000129","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.583Z"}]
+
+19:40:27 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000129","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.583Z"}]
+
+19:40:27 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000129",{}]
+
+19:40:27 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000129",{}]
+
+19:40:27 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000130","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.684Z"}]
+
+19:40:27 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000130","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.684Z"}]
+
+19:40:27 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000130",{}]
+
+19:40:27 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000130",{}]
+
+19:40:27 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000131","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.736Z"}]
+
+19:40:27 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000131","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T01:51:22.736Z"}]
+
+19:40:27 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000131",{}]
+
+19:40:27 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000131",{}]
+
+19:40:27 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000132","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.883Z"}]
+
+19:40:27 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000132","StatusNotification",{"connectorId":2,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T01:51:22.883Z"}]
+
+19:40:27 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000132",{}]
+
+19:40:27 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000132",{}]
+
+19:53:28 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+19:53:28 - INFO - proxy.py - proxy_handler
+      Chargepoint connection closed
+
+19:53:28 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:53:28 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:53:35 - INFO - connection_manager.py - reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+19:53:35 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+19:53:40 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+19:53:45 - INFO - connection_manager.py - initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+19:53:45 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+19:53:45 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+19:53:48 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 47238)
+
+19:53:48 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+19:53:48 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: klPYKdEvJl6W0DeHxn4IPZeqElDUUW
+
+19:53:48 - INFO - connection_manager.py - add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:53:48 - INFO - connection_manager.py - add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:53:48 - INFO - connection_manager.py - connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+19:53:48 - INFO - connection_manager.py - add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+19:53:48 - INFO - connection_manager.py - add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+
+19:53:48 - INFO - connection_manager.py - connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:53:48 - INFO - connection_manager.py - handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+19:53:51 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000133","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:04:50.126Z"}]
+
+19:53:51 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000133","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:04:50.126Z"}]
+
+19:53:51 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000133",{}]
+
+19:53:51 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000133",{}]
+
+20:00:27 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+20:00:27 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connection closed
+
+20:00:27 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:00:27 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:00:34 - INFO - connection_manager.py - reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+20:00:34 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:00:39 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:00:44 - INFO - connection_manager.py - initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+20:00:44 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+20:00:44 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+20:00:48 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 42838)
+
+20:00:48 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+20:00:48 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: QfD3Dq6KsG53Fk1RbE0YJUMx6A1NRL
+
+20:00:48 - INFO - connection_manager.py - add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:00:48 - INFO - connection_manager.py - add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:00:48 - INFO - connection_manager.py - connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:00:48 - INFO - connection_manager.py - add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:00:48 - INFO - connection_manager.py - add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+
+20:00:48 - INFO - connection_manager.py - connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:00:48 - INFO - connection_manager.py - handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:00:50 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000134","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:11:49.375Z"}]
+
+20:00:51 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000134","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:11:49.375Z"}]
+
+20:00:51 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000134",{}]
+
+20:00:51 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000134",{}]
+
+20:00:54 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000135","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:11:52.535Z"}]
+
+20:00:54 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000135","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:11:52.535Z"}]
+
+20:00:54 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000135",{}]
+
+20:00:54 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000135",{}]
+
+20:20:37 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+20:20:37 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connection closed
+
+20:20:37 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:20:37 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:20:44 - INFO - connection_manager.py - reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+20:20:44 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:20:49 - ERROR - connection_manager.py - initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:20:54 - INFO - connection_manager.py - initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+20:20:54 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+20:20:54 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+20:20:57 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 41080)
+
+20:20:57 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+20:20:57 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: aFhOvhz8A4Ji1dkytMCGh5eMvkodIb
+
+20:20:57 - INFO - connection_manager.py - add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:20:57 - INFO - connection_manager.py - add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:20:57 - INFO - connection_manager.py - connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:20:57 - INFO - connection_manager.py - add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:20:57 - INFO - connection_manager.py - add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+
+20:20:57 - INFO - connection_manager.py - connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:20:57 - INFO - connection_manager.py - handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:20:58 - INFO - connection_manager.py - process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000136","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:31:57.147Z"}]
+
+20:20:58 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000136","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:31:57.147Z"}]
+
+20:20:58 - INFO - connection_manager.py - handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000136",{}]
+
+20:20:58 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000136",{}]
+
+20:25:02 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+20:25:02 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connection closed
+
+20:25:02 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:25:02 - INFO - connection_manager.py - remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:25:09 - INFO - connection_manager.py - _reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+20:25:09 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:25:14 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:25:19 - INFO - connection_manager.py - _initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+20:25:19 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+20:25:19 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+20:25:23 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 56014)
+
+20:25:23 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+20:25:23 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: 25xvleJtbT7yWY7wNlAa9JtE2Ng9Ou
+
+20:25:23 - INFO - connection_manager.py - _add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:25:23 - INFO - connection_manager.py - _add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:25:23 - INFO - connection_manager.py - _connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:25:23 - INFO - connection_manager.py - _add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:25:23 - INFO - connection_manager.py - _add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+
+20:25:23 - INFO - connection_manager.py - _connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:25:23 - INFO - connection_manager.py - _handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:25:24 - INFO - connection_manager.py - _process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000137","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:36:23.426Z"}]
+
+20:25:25 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000137","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:36:23.426Z"}]
+
+20:25:25 - INFO - connection_manager.py - _handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000137",{}]
+
+20:25:25 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000137",{}]
+
+20:25:26 - INFO - connection_manager.py - _process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000138","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:36:25.167Z"}]
+
+20:25:26 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000138","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:36:25.167Z"}]
+
+20:25:26 - INFO - connection_manager.py - _handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000138",{}]
+
+20:25:26 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000138",{}]
+
+20:44:47 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+20:44:47 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connection closed
+
+20:44:47 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:44:47 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:44:54 - INFO - connection_manager.py - _reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+20:44:54 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:44:59 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:45:04 - INFO - connection_manager.py - _initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+20:45:04 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+20:45:04 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+20:45:07 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 45812)
+
+20:45:07 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+20:45:07 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: px951jc7XSAmfFh4xnMOx9dVpsLz0Y
+
+20:45:07 - INFO - connection_manager.py - _add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:45:07 - INFO - connection_manager.py - _add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:45:07 - INFO - connection_manager.py - _connect_to_csms
+      Connecting to CSMS: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:45:07 - INFO - connection_manager.py - _add_csms_connection
+      Adding CSMS connection: 76445074-af80-4791-8120-d8b3fbf5cd0c, 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:45:07 - INFO - connection_manager.py - _add_csms_connection
+      Added CSMS connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, total CSMS connections: 1
+
+20:45:07 - INFO - connection_manager.py - _connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:45:07 - INFO - connection_manager.py - _handle_csms_messages
+      Handling CSMS messages for: 93b78148-199d-44df-9751-1ff71aaa7cab, 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:45:16 - INFO - connection_manager.py - _process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000139","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:56:14.898Z"}]
+
+20:45:16 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000139","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T02:56:14.898Z"}]
+
+20:45:16 - INFO - connection_manager.py - _handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000139",{}]
+
+20:45:16 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000139",{}]
+
+20:47:28 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+20:47:28 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connection closed
+
+20:47:28 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:47:28 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:47:34 - INFO - connection_manager.py - _reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+20:47:34 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:47:39 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:47:44 - INFO - connection_manager.py - _initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+20:47:44 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+20:47:44 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+20:47:48 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 32924)
+
+20:47:48 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+20:47:48 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: BI6bo20IljD6Sti5UnN5ejb4DTfOyt
+
+20:47:48 - INFO - connection_manager.py - _add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:47:48 - INFO - connection_manager.py - _add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:47:48 - INFO - connection_manager.py - _connect_to_csms
+      Connecting to CSMS for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, authorization: 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:47:48 - INFO - connection_manager.py - _add_csms_connection
+      Adding CSMS connection: 93b78148-199d-44df-9751-1ff71aaa7cab for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:47:48 - INFO - connection_manager.py - _add_csms_connection
+      Added CSMS connection for authorization: 93b78148-199d-44df-9751-1ff71aaa7cab, total CSMS connections for chargepoint 76445074-af80-4791-8120-d8b3fbf5cd0c: 1
+
+20:47:48 - INFO - connection_manager.py - _connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:47:48 - INFO - connection_manager.py - _handle_csms_messages
+      Handling CSMS messages for authorization: 93b78148-199d-44df-9751-1ff71aaa7cab, chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:47:49 - INFO - connection_manager.py - _process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000140","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:58:48.029Z"}]
+
+20:47:49 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000140","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T02:58:48.029Z"}]
+
+20:47:49 - INFO - connection_manager.py - _handle_csms_messages
+      <- [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000140",{}]
+
+20:47:49 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000140",{}]
+
+20:53:22 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+20:53:22 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connection closed
+
+20:53:22 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:53:22 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:53:29 - INFO - connection_manager.py - _reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+20:53:29 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:53:34 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+20:53:39 - INFO - connection_manager.py - _initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+20:53:39 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+20:53:39 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+20:53:42 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 41536)
+
+20:53:42 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+20:53:42 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: 42OZmLj5EEj3GdFRZnCS7Lll7q7t4J
+
+20:53:42 - INFO - connection_manager.py - _add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:53:42 - INFO - connection_manager.py - _add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:53:42 - INFO - connection_manager.py - _connect_to_csms
+      Connecting to CSMS for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, authorization: 93b78148-199d-44df-9751-1ff71aaa7cab
+
+20:53:42 - INFO - connection_manager.py - _add_csms_connection
+      Adding CSMS connection: 93b78148-199d-44df-9751-1ff71aaa7cab for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:53:42 - INFO - connection_manager.py - _add_csms_connection
+      Added CSMS connection for authorization: 93b78148-199d-44df-9751-1ff71aaa7cab, total CSMS connections for chargepoint 76445074-af80-4791-8120-d8b3fbf5cd0c: 1
+
+20:53:42 - INFO - connection_manager.py - _connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:53:42 - INFO - connection_manager.py - _handle_csms_messages
+      Handling CSMS messages for authorization: 93b78148-199d-44df-9751-1ff71aaa7cab, chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+20:53:43 - INFO - connection_manager.py - _process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000141","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T03:04:42.471Z"}]
+
+20:53:44 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000141","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Preparing","timestamp":"2022-01-29T03:04:42.471Z"}]
+
+20:53:44 - INFO - connection_manager.py - _handle_csms_messages
+      <- [CSMS] 93b78148-199d-44df-9751-1ff71aaa7cab [3,"1000141",{}]
+
+20:53:44 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000141",{}]
+
+21:00:46 - INFO - proxy.py - shutdown
+      Received exit signal SIGTERM...
+
+21:00:46 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connection closed
+
+21:00:46 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removing chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+21:00:46 - INFO - connection_manager.py - _remove_chargepoint_connection
+      Removed chargepoint connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+21:00:54 - INFO - connection_manager.py - _reconnect_redis
+      Connected to Redis at redis://redis:6379
+
+21:00:54 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+21:00:59 - ERROR - connection_manager.py - _initialize_rabbitmq
+      Failed to connect to RabbitMQ: [Errno 111] Connect call failed ('172.19.0.4', 5672)
+
+21:01:04 - INFO - connection_manager.py - _initialize_rabbitmq
+      Connected to RabbitMQ at amqp://guest:guest@rabbitmq/
+
+21:01:04 - INFO - proxy.py - main
+      Starting proxy server on IP address: 172.19.0.3
+
+21:01:04 - INFO - proxy.py - main
+      WebSocket proxy server started
+
+21:01:06 - INFO - connection_manager.py - proxy_handler
+      Chargepoint connected: ('172.19.0.10', 34422)
+
+21:01:06 - INFO - proxy_utils.py - get_access_token
+      Requesting access token with data (attempt 1/5)
+
+21:01:07 - INFO - connection_manager.py - proxy_handler
+      Access token obtained: XhnBe95SXNRzpqhIWaSXHv79jOWwir
+
+21:01:07 - INFO - connection_manager.py - _add_chargepoint_connection
+      Adding chargepoint connection: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+21:01:07 - INFO - connection_manager.py - _add_chargepoint_connection
+      Added connection for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+21:01:07 - INFO - connection_manager.py - _connect_to_csms
+      Connecting to CSMS for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c, authorization: 93b78148-199d-44df-9751-1ff71aaa7cab
+
+21:01:07 - INFO - connection_manager.py - _add_csms_connection
+      Adding CSMS connection: 93b78148-199d-44df-9751-1ff71aaa7cab for chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+21:01:07 - INFO - connection_manager.py - _add_csms_connection
+      Added CSMS connection for authorization: 93b78148-199d-44df-9751-1ff71aaa7cab, total CSMS connections for chargepoint 76445074-af80-4791-8120-d8b3fbf5cd0c: 1
+
+21:01:07 - INFO - connection_manager.py - _connect_to_csms
+      Connected to CSMS 93b78148-199d-44df-9751-1ff71aaa7cab at ws://172.19.0.22:8180/steve/websocket/CentralSystemService/CP1 for ChargePoint 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+21:01:07 - INFO - connection_manager.py - _handle_csms_messages
+      Handling CSMS messages for authorization: 93b78148-199d-44df-9751-1ff71aaa7cab, chargepoint: 76445074-af80-4791-8120-d8b3fbf5cd0c
+
+21:01:18 - INFO - connection_manager.py - _process_message_from_chargepoint
+      <- [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [2,"1000142","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T03:12:16.504Z"}]
+
+21:01:18 - INFO - connection_manager.py - send_to_csms
+      -> [CSMS] 93b78148-199d-44df-9751-1ff71aaa7cab [2,"1000142","StatusNotification",{"connectorId":1,"errorCode":"NoError","status":"Available","timestamp":"2022-01-29T03:12:16.504Z"}]
+
+21:01:18 - INFO - connection_manager.py - _handle_csms_messages
+      <- [CSMS] 93b78148-199d-44df-9751-1ff71aaa7cab [3,"1000142",{}]
+
+21:01:18 - INFO - connection_manager.py - send_to_chargepoint
+      -> [CP] 76445074-af80-4791-8120-d8b3fbf5cd0c [3,"1000142",{}]
+
