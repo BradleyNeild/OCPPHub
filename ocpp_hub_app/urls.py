@@ -2,11 +2,13 @@ from django.urls import path, include
 from .views import (
     oauth_login, oauth_callback, TokenEndpoint, ApiEndpoint,
     setup_ocpp_configuration, get_meter_values, list_chargepoints, get_chargepoint_details,
-    status_page, update_chargepoint_status, update_chargepoint_connection_status, authorization_create, authorization_list, resend_verification_email,
-    profile_view, delete_account, dashboard, landing, register, activate, authorization_edit, authorization_delete, profile,
+    status_page, reset_chargepoint_connections, update_chargepoint_status, update_chargepoint_connection_status, authorization_create, authorization_list, resend_verification_email,
+    profile_view, set_primary_authorization, delete_account, dashboard, landing, register, activate, authorization_edit, authorization_delete, profile,
     chargepoint_create, chargepoint_delete, chargepoint_edit, chargepoint_list, update_authorization_connection_status,
-    chargepoint_log, authorization_log, generate_auth_key_view, chargepoint_log_list, authorization_log_list, dashboard_data
+    chargepoint_log, authorization_log, generate_auth_key_view, chargepoint_log_list, authorization_log_list, dashboard_data,
+    restart_authorization, restart_chargepoint, logs, logs_data
 )
+
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -48,5 +50,10 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('profile/', profile_view, name='profile_view'),
     path('resend-verification-email/', resend_verification_email, name='resend_verification_email'),
+    path('api/restart_authorization/', restart_authorization, name='restart_authorization'),
+    path('api/restart_chargepoint/', restart_chargepoint, name='restart_chargepoint'),
+    path('chargepoints/<uuid:chargepoint_uuid>/authorizations/<uuid:authorization_uuid>/set_primary/', set_primary_authorization, name='set_primary_authorization'),
+    path('logs/', logs, name='logs'),
+    path('logs/data/', logs_data, name='logs_data'),
+    path('api/reset_chargepoint_connections/', reset_chargepoint_connections, name='reset_chargepoint_connections'),
 ]
-

@@ -12,7 +12,7 @@
                     Charge Points
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ status_info.total_chargepoints }}</h5>
+                    <h5 class="card-title" id="total-chargepoints">{{ status_info.total_chargepoints }}</h5>
                     <p class="card-text">Total Charge Points</p>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                     Authorizations
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ status_info.total_authorizations }}</h5>
+                    <h5 class="card-title" id="total-authorizations">{{ status_info.total_authorizations }}</h5>
                     <p class="card-text">Total Authorizations</p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                     Connected Authorizations
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ status_info.connected_authorizations }}</h5>
+                    <h5 class="card-title" id="connected-authorizations">{{ status_info.connected_authorizations }}</h5>
                     <p class="card-text">Connected</p>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     Disconnected Authorizations
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ status_info.disconnected_authorizations }}</h5>
+                    <h5 class="card-title" id="disconnected-authorizations">{{ status_info.disconnected_authorizations }}</h5>
                     <p class="card-text">Disconnected</p>
                 </div>
             </div>
@@ -65,6 +65,11 @@
     <div id="authorizations-section" class="table-responsive">
         <!-- Authorizations table will be dynamically loaded here -->
     </div>
+    
+    <div class="mt-5">
+        <h2>System Logs</h2>
+        <a href="{% url 'logs' %}" class="btn btn-primary">View Logs</a>
+    </div>
 </div>
 
 <script>
@@ -75,95 +80,190 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch("{% url 'dashboard_data' %}")
             .then(response => response.json())
             .then(data => {
-                const chargepointsSection = document.getElementById("chargepoints-section");
-                const authorizationsSection = document.getElementById("authorizations-section");
-
-                // Update Chargepoints table
-                let chargepointsHtml = `
-                    <table class="table table-striped mt-3">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Location</th>
-                                <th>Status</th>
-                                <th>Connection</th>
-                                <th>ID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                data.chargepoints.forEach(chargepoint => {
-                    chargepointsHtml += `
-                        <tr>
-                            <td>${chargepoint.name}</td>
-                            <td>${chargepoint.location}</td>
-                            <td>${chargepoint.status}</td>
-                            <td>${chargepoint.connection_status}</td>
-                            <td>${chargepoint.uuid}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="5">
-                                <div class="d-flex justify-content-start mt-2">
-                                    <a href="${chargepoint.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
-                                    <a href="${chargepoint.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
-                                    <a href="${chargepoint.manage_authorizations_url}" class="btn btn-sm btn-info mr-2">Manage Authorizations</a>
-                                    <a href="${chargepoint.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${chargepoint.log_count}</span></a>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-                chargepointsHtml += `
-                        </tbody>
-                    </table>
-                `;
-                chargepointsSection.innerHTML = chargepointsHtml;
-
-                // Update Authorizations table
-                let authorizationsHtml = `
-                    <table class="table table-striped mt-3">
-                        <thead>
-                            <tr>
-                                <th>CSMS Name</th>
-                                <th>Connect URL</th>
-                                <th>Charge Point</th>
-                                <th>Chargepoint ID</th>
-                                <th>Connection</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                data.authorizations.forEach(authorization => {
-                    authorizationsHtml += `
-                        <tr>
-                            <td>${authorization.csms_name}</td>
-                            <td>${authorization.connect_url}</td>
-                            <td>${authorization.chargepoint_name}</td>
-                            <td>${authorization.cp_id}</td>
-                            <td>${authorization.connection_status}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="5">
-                                <div class="d-flex justify-content-start mt-2">
-                                    <a href="${authorization.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
-                                    <a href="${authorization.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
-                                    <a href="${authorization.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${authorization.log_count}</span></a>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-                authorizationsHtml += `
-                        </tbody>
-                    </table>
-                `;
-                authorizationsSection.innerHTML = authorizationsHtml;
+                updateChargepointsTable(data.chargepoints);
+                updateAuthorizationsTable(data.authorizations);
+                updateStatusInfo(data.status_info);
+            })
+            .catch(error => {
+                console.error('Error loading dashboard data:', error);
+                alert('Failed to load dashboard data. Please try again.');
             });
+    }
+
+    function updateStatusInfo(statusInfo) {
+        document.getElementById('total-chargepoints').textContent = statusInfo.total_chargepoints;
+        document.getElementById('total-authorizations').textContent = statusInfo.total_authorizations;
+        document.getElementById('connected-authorizations').textContent = statusInfo.connected_authorizations;
+        document.getElementById('disconnected-authorizations').textContent = statusInfo.disconnected_authorizations;
+    }
+
+    function updateChargepointsTable(chargepoints) {
+        const chargepointsSection = document.getElementById("chargepoints-section");
+        let chargepointsHtml = `
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Connection</th>
+                        <th>ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        chargepoints.forEach(chargepoint => {
+            chargepointsHtml += `
+                <tr>
+                    <td>${chargepoint.name}</td>
+                    <td>${chargepoint.location}</td>
+                    <td>${chargepoint.status}</td>
+                    <td>${chargepoint.connection_status}</td>
+                    <td>${chargepoint.uuid}</td>
+                    <td>
+                        <div class="d-flex justify-content-start mt-2">
+                            <a href="${chargepoint.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
+                            <a href="${chargepoint.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
+                            <a href="${chargepoint.manage_authorizations_url}" class="btn btn-sm btn-info mr-2">Manage Authorizations</a>
+                            <a href="${chargepoint.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${chargepoint.log_count}</span></a>
+                            <button class="btn btn-sm btn-warning ml-2 reset-connections" data-chargepoint-uuid="${chargepoint.uuid}">Reset Connections</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        chargepointsHtml += `
+                </tbody>
+            </table>
+        `;
+        chargepointsSection.innerHTML = chargepointsHtml;
+    }
+
+    function updateAuthorizationsTable(authorizations) {
+        const authorizationsSection = document.getElementById("authorizations-section");
+        let authorizationsHtml = `
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr>
+                        <th>UUID</th>
+                        <th>CSMS Name</th>
+                        <th>Connect URL</th>
+                        <th>Charge Point</th>
+                        <th>Chargepoint ID</th>
+                        <th>Connection</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        authorizations.forEach(authorization => {
+            authorizationsHtml += `
+                <tr>
+                    <td>${authorization.uuid}</td>
+                    <td>${authorization.csms_name}</td>
+                    <td>${authorization.connect_url}</td>
+                    <td>${authorization.chargepoint_name}</td>
+                    <td>${authorization.cp_id}</td>
+                    <td>${authorization.connection_status}</td>
+                    <td>${authorization.is_primary ? '<span class="badge badge-primary">Primary</span>' : 'Secondary'}</td>
+                    <td>
+                        <div class="d-flex justify-content-start mt-2">
+                            <a href="${authorization.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
+                            <a href="${authorization.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
+                            <a href="${authorization.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${authorization.log_count}</span></a>
+                            ${!authorization.is_primary ? `<button class="btn btn-sm btn-success ml-2 set-primary" data-chargepoint-uuid="${authorization.chargepoint_uuid}" data-authorization-uuid="${authorization.uuid}">Set as Primary</button>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        authorizationsHtml += `
+                </tbody>
+            </table>
+        `;
+        authorizationsSection.innerHTML = authorizationsHtml;
     }
 
     refreshButton.addEventListener("click", function() {
         loadDashboardData();
     });
+
+    // Event delegation for dynamic buttons
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('reset-connections')) {
+            const chargepointUuid = event.target.getAttribute('data-chargepoint-uuid');
+            resetConnections(chargepointUuid);
+        }
+        if (event.target.classList.contains('set-primary')) {
+            const chargepointUuid = event.target.getAttribute('data-chargepoint-uuid');
+            const authorizationUuid = event.target.getAttribute('data-authorization-uuid');
+            if (chargepointUuid && authorizationUuid) {
+                setPrimaryAuthorization(chargepointUuid, authorizationUuid);
+            } else {
+                console.error('Failed to get chargepoint UUID or authorization UUID');
+            }
+        }
+    });
+
+    function resetConnections(chargepointUuid) {
+        if (!confirm('Are you sure you want to reset the connections for this chargepoint?')) {
+            return;
+        }
+
+        fetch("{% url 'reset_chargepoint_connections' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ chargepoint_uuid: chargepointUuid })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Chargepoint connections reset successfully.');
+                loadDashboardData();
+            } else {
+                alert('Failed to reset chargepoint connections: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while resetting the chargepoint connections.');
+        });
+    }
+
+    function setPrimaryAuthorization(chargepointUuid, authorizationUuid) {
+        if (!confirm('Are you sure you want to set this as the primary authorization?')) {
+            return;
+        }
+
+        const url = `/chargepoints/${chargepointUuid}/authorizations/${authorizationUuid}/set_primary/`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ chargepoint_uuid: chargepointUuid, authorization_uuid: authorizationUuid })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Primary authorization set successfully.');
+                loadDashboardData();
+            } else {
+                alert('Failed to set primary authorization: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while setting the primary authorization.');
+        });
+    }
 
     // Initial load
     loadDashboardData();

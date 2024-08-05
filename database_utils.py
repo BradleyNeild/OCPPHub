@@ -1,33 +1,65 @@
 from ocpp_hub_app.models import Authorization, ChargePoint, LogEntry
 from asgiref.sync import sync_to_async
 import logging
-
+import json
+from datetime import datetime
 logger = logging.getLogger('app_logger')
 error_logger = logging.getLogger('error_logger')
 
-@sync_to_async
-def create_log_entry_async(chargepoint_uuid: str = None, authorization: Authorization = None, event_type: str = "Information", message: str = "", raw_message: str = ""):
-    """
-    Creates a log entry in the database.
 
-    Parameters:
-        chargepoint_uuid (str): UUID of the chargepoint.
-        authorization (Authorization): Authorization object.
-        event_type (str): Type of event.
-        message (str): Log message.
-        raw_message (str): Raw message.
-    """
-    chargepoint_instance = None
-    if chargepoint_uuid:
-        try:
-            chargepoint_instance = ChargePoint.objects.get(uuid=chargepoint_uuid)
-        except ChargePoint.DoesNotExist:
-            error_logger.error(f"ChargePoint with UUID {chargepoint_uuid} does not exist.")
-            return
-    
-    log_entry = LogEntry(chargepoint=chargepoint_instance, authorization=authorization, event_type=event_type, message=message, raw_message=raw_message)
-    log_entry.save()
-    logger.debug(f"Log entry created: {message} | Raw message: {raw_message}")
+@sync_to_async
+def create_log_entry_async(chargepoint_uuid=None, authorization=None, event_type=None, action=None, 
+                           from_entity=None, to_entity=None, message=None, raw_message=None, 
+                           level='INFO'):
+    try:
+        log_entry = LogEntry(
+            event_type=event_type,
+            action=action,
+            message=message,
+            level=level
+        )
+
+        if chargepoint_uuid:
+            try:
+                log_entry.chargepoint = ChargePoint.objects.get(uuid=chargepoint_uuid)
+            except ChargePoint.DoesNotExist:
+                logger.error(f"ChargePoint with UUID {chargepoint_uuid} does not exist.")
+
+        if authorization:
+            if isinstance(authorization, Authorization):
+                log_entry.authorization = authorization
+            elif isinstance(authorization, str):
+                try:
+                    log_entry.authorization = Authorization.objects.get(uuid=authorization)
+                except Authorization.DoesNotExist:
+                    logger.error(f"Authorization with UUID {authorization} does not exist.")
+            else:
+                logger.error(f"Invalid authorization type: {type(authorization)}")
+
+        if from_entity:
+            log_entry.set_from_entity(
+                from_entity.get('name', 'Unknown'),
+                from_entity.get('type', 'Unknown'),
+                from_entity.get('uuid')
+            )
+
+        if to_entity:
+            log_entry.set_to_entity(
+                to_entity.get('name', 'Unknown'),
+                to_entity.get('type', 'Unknown'),
+                to_entity.get('uuid')
+            )
+
+        if raw_message:
+            log_entry.set_raw_message(raw_message)
+
+        log_entry.save()
+        logger.debug(f"Log entry created: {log_entry}")
+        return log_entry
+    except Exception as e:
+        logger.error(f"Error creating log entry: {str(e)}", exc_info=True)
+        raise
+
 
 @sync_to_async
 def update_authorization_connection_status_async(authorization_uuid: str, connection_status: str):
@@ -83,3 +115,18 @@ def get_authorizations_by_chargepoint_uuid_async(chargepoint_uuid: str):
         list: List of Authorization objects.
     """
     return list(Authorization.objects.filter(chargepoint__uuid=chargepoint_uuid))
+
+@sync_to_async
+def set_primary_authorization_async(chargepoint_uuid: str, authorization_uuid: str):
+    """
+    Sets an authorization as the primary for a given chargepoint.
+
+    Parameters:
+        chargepoint_uuid (str): UUID of the chargepoint.
+        authorization_uuid (str): UUID of the authorization to be set as primary.
+    """
+    authorizations = Authorization.objects.filter(chargepoint__uuid=chargepoint_uuid)
+    for auth in authorizations:
+        auth.is_primary = (auth.uuid == authorization_uuid)
+        auth.save()
+    return authorizations

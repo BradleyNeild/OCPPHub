@@ -4,7 +4,7 @@ import logging
 from aiohttp import web
 from dotenv import load_dotenv
 from connection_manager import ConnectionManager
-from proxy_utils import get_ip_address
+from proxy_utils import get_ip_address, get_access_token
 import os
 import signal
 
@@ -37,6 +37,83 @@ async def close_authorization_connection(request: web.Request) -> web.Response:
     response = await connection_manager.close_authorization_connection(authorization_uuid)
     return web.json_response(response)
 
+async def restart_chargepoint(request: web.Request) -> web.Response:
+    """
+    Restarts connections for a chargepoint.
+
+    Parameters:
+        request (web.Request): HTTP request containing the chargepoint UUID.
+
+    Returns:
+        web.Response: JSON response indicating success or failure.
+    """
+    try:
+        data = await request.json()
+        chargepoint_uuid = data.get('chargepoint_uuid')
+
+        if not chargepoint_uuid:
+            logger.error('chargepoint_uuid is required')
+            return web.json_response({'error': 'chargepoint_uuid is required'}, status=400)
+
+        # Close existing connections
+        await connection_manager.close_chargepoint_connections(chargepoint_uuid)
+
+        # Re-fetch details and re-establish connections
+        access_token = get_access_token()
+        details = await connection_manager.get_chargepoint_details(chargepoint_uuid, access_token)
+        actual_chargepoint_uuid = details.get('uuid', chargepoint_uuid)
+        await connection_manager._add_chargepoint_connection(actual_chargepoint_uuid, None)
+        
+        logger.info(f'Successfully restarted chargepoint {chargepoint_uuid}')
+        return web.json_response({'status': 'success'})
+    except Exception as e:
+        logger.error(f'Error restarting chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
+        return web.json_response({'error': 'Internal server error', 'details': str(e)}, status=500)
+
+async def set_primary_authorization(request: web.Request) -> web.Response:
+    try:
+        data = await request.json()
+        chargepoint_uuid = data.get('chargepoint_uuid')
+        authorization_uuid = data.get('authorization_uuid')
+        authorizations = data.get('authorizations', [])
+
+        if not chargepoint_uuid or not authorization_uuid or not authorizations:
+            logger.error(f"Missing required data: chargepoint_uuid={chargepoint_uuid}, authorization_uuid={authorization_uuid}, authorizations={bool(authorizations)}")
+            return web.json_response({'error': 'chargepoint_uuid, authorization_uuid, and authorizations are required'}, status=400)
+
+        success = await connection_manager.set_primary_authorization_async(chargepoint_uuid, authorization_uuid, authorizations)
+
+        if success:
+            logger.info(f'Successfully set primary authorization {authorization_uuid} for chargepoint {chargepoint_uuid}')
+            return web.json_response({'status': 'success'})
+        else:
+            logger.error(f'Failed to set primary authorization {authorization_uuid} for chargepoint {chargepoint_uuid}')
+            return web.json_response({'error': 'Failed to set primary authorization'}, status=500)
+    except Exception as e:
+        logger.error(f'Error setting primary authorization {authorization_uuid} for chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
+        return web.json_response({'error': 'Internal server error', 'details': str(e)}, status=500)
+    
+async def reset_chargepoint_connections(request: web.Request) -> web.Response:
+    try:
+        data = await request.json()
+        chargepoint_uuid = data.get('chargepoint_uuid')
+
+        if not chargepoint_uuid:
+            logger.error('chargepoint_uuid is required')
+            return web.json_response({'error': 'chargepoint_uuid is required'}, status=400)
+
+        success = await connection_manager.reset_chargepoint_connections(chargepoint_uuid)
+        
+        if success:
+            logger.info(f'Successfully reset connections for chargepoint {chargepoint_uuid}')
+            return web.json_response({'status': 'success'})
+        else:
+            logger.error(f'Failed to reset connections for chargepoint {chargepoint_uuid}')
+            return web.json_response({'error': 'Failed to reset connections', 'details': 'Check proxy logs for more information'}, status=500)
+    except Exception as e:
+        logger.error(f'Error resetting connections for chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
+        return web.json_response({'error': 'Internal server error', 'details': str(e)}, status=500)
+
 async def main():
     """
     Main entry point for the proxy server.
@@ -52,11 +129,13 @@ async def main():
     aiohttp_app = web.Application()
     aiohttp_app.add_routes([
         web.post('/api/close_authorization', close_authorization_connection),
+        web.post('/api/reset_chargepoint_connections', reset_chargepoint_connections),  # Corrected URL
+        web.post('/api/set_primary_authorization', set_primary_authorization),
     ])
 
     aiohttp_runner = web.AppRunner(aiohttp_app)
     await aiohttp_runner.setup()
-    aiohttp_site = web.TCPSite(aiohttp_runner, '0.0.0.0', 8999)
+    aiohttp_site = web.TCPSite(aiohttp_runner, '0.0.0.0', 8999)  # REST API on port 8999
     await aiohttp_site.start()
 
     loop = asyncio.get_event_loop()
@@ -65,7 +144,7 @@ async def main():
 
     while True:
         try:
-            async with websockets.serve(connection_manager.proxy_handler, "0.0.0.0", 8998):
+            async with websockets.serve(connection_manager.proxy_handler, "0.0.0.0", 8998):  # WebSocket on port 8998
                 logger.info("WebSocket proxy server started")
                 await asyncio.Future()  # Keeps the WebSocket server running
         except OSError as e:

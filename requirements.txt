@@ -11,5 +11,3 @@ requests_oauthlib
 django-environ
 django-allauth
 python-dotenv
-aio-pika
-aioredis

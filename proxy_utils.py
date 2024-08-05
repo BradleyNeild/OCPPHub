@@ -1,13 +1,11 @@
 import logging
-import json
 import requests
 from requests.exceptions import ConnectionError
 from dotenv import load_dotenv
 import socket
-from email.mime.text import MIMEText
-import os
 import time
 from logging_config import configure_logging
+import os 
 
 # Set up logging
 logger, error_logger = configure_logging()
@@ -85,7 +83,8 @@ def identify_event_type(parsed_message):
         'FirmwareStatusNotification': "Firmware Status Notification",
         'DiagnosticsStatusNotification': "Diagnostics Status Notification",
         'DataTransfer': "Data Transfer",
-        3: "Call Result"
+        3: "Call Result",
+        4: "Call Error"
     }
 
     return event_types.get(action, event_types.get(message_type_id, "Information"))
