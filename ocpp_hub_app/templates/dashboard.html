@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 alert('Chargepoint connections reset successfully.');
                 loadDashboardData();
             } else {
-                alert('Failed to reset chargepoint connections: ' + (data.message || 'Unknown error'));
+                alert('Failed to reset chargepoint connections: ' + (data.error || 'Unknown error'));
             }
         })
         .catch(error => {

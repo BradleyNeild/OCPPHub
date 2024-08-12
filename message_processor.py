@@ -66,8 +66,8 @@ class MessageProcessor:
                 logger.info(f"Updated chargepoint {chargepoint_name} status to {status}")
 
         except Exception as e:
-            logger.error(f"Error processing message from chargepoint {chargepoint_uuid}: {str(e)}", exc_info=True)
-            await self._log_error(chargepoint_uuid, "Processing Error", f"Unexpected error in processing message from chargepoint: {str(e)}", message)
+            logger.error(f"Error processing message from CP {chargepoint_uuid}: {str(e)}", exc_info=True)
+            await self._log_error(chargepoint_uuid, "Processing Error", f"Unexpected error in processing message from CP {str(e)}", message)
 
     async def process_message_from_csms(self, chargepoint_uuid: str, message: str, csms_uuid: str) -> None:
         try:
@@ -75,6 +75,7 @@ class MessageProcessor:
             authorization = await sync_to_async(Authorization.objects.get)(uuid=csms_uuid)
             chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
             chargepoint_name = chargepoint.name
+            csms_name = authorization.csms_name
             csms_status = "(P)" if authorization.is_primary else "(S)"
 
             event_type = identify_event_type(parsed_message)
@@ -85,9 +86,9 @@ class MessageProcessor:
                 authorization=authorization,
                 event_type=event_type,
                 action=action,
-                from_entity={"name": authorization.csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
+                from_entity={"name": csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
                 to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                message=f"{event_type} message received from CSMS {authorization.csms_name} {csms_status}",
+                message=f"{event_type} message received from CSMS {csms_name} {csms_status}",
                 raw_message=message,
                 level='INFO'
             )
@@ -100,9 +101,9 @@ class MessageProcessor:
                     authorization=authorization,
                     event_type=event_type,
                     action="Forwarded to Chargepoint",
-                    from_entity={"name": authorization.csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
+                    from_entity={"name": csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
                     to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                    message=f"Message forwarded to Chargepoint {chargepoint_name} from primary CSMS {authorization.csms_name}",
+                    message=f"Message forwarded to Chargepoint {chargepoint_name} from primary CSMS {csms_name}",
                     raw_message=message,
                     level='INFO'
                 )
@@ -114,7 +115,7 @@ class MessageProcessor:
                     else:
                         call_error = [4, parsed_message[1], "NotSupported", f"Action from secondary CSMS is not supported", {}]
                         await self.connection_manager.send_to_csms(csms_uuid, json.dumps(call_error))
-                        logger.info(f"Sent CallError to secondary CSMS {authorization.csms_name}: {json.dumps(call_error)}")
+                        logger.info(f"Sent CallError to secondary CSMS {csms_name}: {json.dumps(call_error)}")
 
                         await create_log_entry_async(
                             chargepoint_uuid=chargepoint_uuid,
@@ -122,17 +123,17 @@ class MessageProcessor:
                             event_type='CallError',
                             action="Unsupported action from secondary CSMS",
                             from_entity={"name": "Proxy", "type": "System"},
-                            to_entity={"name": authorization.csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
+                            to_entity={"name": csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
                             message="Action from secondary CSMS is not supported",
                             raw_message=json.dumps(call_error),
                             level='WARNING'
                         )
                 else:
-                    logger.info(f"Received response from secondary CSMS {authorization.csms_name} (not forwarded): {message}")
+                    logger.info(f"Received response from secondary CSMS {csms_name} for CP {chargepoint_name}. Message not forwarded. Message: {message}")
 
         except Exception as e:
             logger.error(f"Error processing message from CSMS {csms_uuid}: {str(e)}", exc_info=True)
-            await self._log_error(chargepoint_uuid, "Processing Error", f"Unexpected error in processing message from CSMS: {str(e)}", message, csms_uuid)
+            await self._log_error(chargepoint_uuid, "Processing Error", f"Unexpected error in processing message from CSMS {str(e)}", message, csms_uuid)
 
     async def _log_error(self, chargepoint_uuid: str, action: str, error_message: str, raw_message: str, csms_uuid: str = None):
         try:

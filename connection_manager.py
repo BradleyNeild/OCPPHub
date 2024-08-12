@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from asgiref.sync import sync_to_async
 import django
 import requests
-from typing import Optional  # Add this import
+from typing import Optional, Dict
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ocpp_hub_project.settings')
 django.setup()
@@ -40,6 +40,7 @@ class ConnectionManager:
         self.message_processor = None
         self.disconnected_csms = set()
         self.connection_attempts = {}  # To track connection attempts per chargepoint
+        self.connection_locks: Dict[str, asyncio.Lock] = {}
 
     async def initialize(self):
         self.message_processor = MessageProcessor(self)
@@ -53,13 +54,13 @@ class ConnectionManager:
         }
         response = requests.get(details_url, headers=headers)
         if response.status_code != 200:
-            logger.error(f"Failed to fetch details for ChargePoint {chargepoint_uuid}: {response.content.decode()}")
+            logger.error(f"Failed to fetch details for CP {chargepoint_uuid}: {response.content.decode()}")
             return None
         return response.json()
 
     async def proxy_handler(self, chargepoint_ws: websockets.WebSocketClientProtocol, path: str):
         chargepoint_uuid = path.strip('/')
-        logger.info(f"Chargepoint connected: {chargepoint_ws.remote_address}")
+        logger.info(f"CP connected: {chargepoint_ws.remote_address}")
 
         access_token = None
         actual_chargepoint_uuid = chargepoint_uuid
@@ -87,25 +88,25 @@ class ConnectionManager:
         except Exception as e:
             await self._exception_handler(chargepoint_ws, e, chargepoint_uuid, access_token if 'access_token' in locals() else None)
         finally:
-            logger.info("Chargepoint connection closed")
+            logger.info("CP connection closed")
             await self._remove_chargepoint_connection(actual_chargepoint_uuid)
 
     async def set_primary_authorization_async(self, chargepoint_uuid: str, new_primary_uuid: str, authorizations: list):
-        logger.info(f"Setting primary authorization {new_primary_uuid} for chargepoint {chargepoint_uuid}")
+        logger.info(f"Setting primary authorization {new_primary_uuid} for CP {chargepoint_uuid}")
         try:
             new_primary = next((auth for auth in authorizations if auth['uuid'] == new_primary_uuid), None)
 
             if not new_primary:
-                logger.error(f"Authorization {new_primary_uuid} not found for chargepoint {chargepoint_uuid}")
+                logger.error(f"Authorization {new_primary_uuid} not found for CP {chargepoint_uuid}")
                 return False
 
             for auth in authorizations:
                 if auth['uuid'] == new_primary_uuid:
                     auth['is_primary'] = True
-                    logger.info(f"Set authorization {new_primary_uuid} as primary for chargepoint {chargepoint_uuid}")
+                    logger.info(f"Set authorization {new_primary_uuid} as primary for CP {chargepoint_uuid}")
                 else:
                     auth['is_primary'] = False
-                    logger.info(f"Set authorization {auth['uuid']} as secondary for chargepoint {chargepoint_uuid}")
+                    logger.info(f"Set authorization {auth['uuid']} as secondary for CP {chargepoint_uuid}")
 
             # Reset connections after changing primary authorization
             await self.reset_chargepoint_connections(chargepoint_uuid)
@@ -117,7 +118,7 @@ class ConnectionManager:
                 action="Set Primary Authorization",
                 from_entity={"name": "System", "type": "System"},
                 to_entity={"name": "Chargepoint", "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                message=f"Set authorization {new_primary_uuid} as primary CSMS for chargepoint {chargepoint_uuid}",
+                message=f"Set authorization {new_primary_uuid} as primary CSMS for CP {chargepoint_uuid}",
                 level='INFO'
             )
             return True
@@ -136,7 +137,7 @@ class ConnectionManager:
             return False
 
     async def reset_chargepoint_connections(self, chargepoint_uuid: str):
-        logger.info(f"Resetting connections for chargepoint {chargepoint_uuid}")
+        logger.info(f"Resetting connections for CP {chargepoint_uuid}")
         try:
             # Close existing connections
             await self._remove_chargepoint_connection(chargepoint_uuid)
@@ -149,7 +150,7 @@ class ConnectionManager:
             access_token = get_access_token()
             details = await self.get_chargepoint_details(chargepoint_uuid, access_token)
             if not details:
-                logger.error(f"Failed to fetch details for chargepoint {chargepoint_uuid}")
+                logger.error(f"Failed to fetch details for CP {chargepoint_uuid}")
                 return False
 
             # Re-establish CSMS connections
@@ -157,58 +158,69 @@ class ConnectionManager:
             for authorization in authorizations:
                 await self._connect_to_csms(chargepoint_uuid, authorization)
 
-            logger.info(f"Successfully reset connections for chargepoint {chargepoint_uuid}")
+            logger.info(f"Successfully reset connections for CP {chargepoint_uuid}")
             return True
         except Exception as e:
-            logger.error(f"Error resetting connections for chargepoint {chargepoint_uuid}: {str(e)}", exc_info=True)
+            logger.error(f"Error resetting connections for CP {chargepoint_uuid}: {str(e)}", exc_info=True)
             return False
 
-
-
     async def _add_chargepoint_connection(self, chargepoint_uuid: str, websocket: Optional[websockets.WebSocketClientProtocol]):
-        if chargepoint_uuid in self.chargepoint_connections:
-            logger.warning(f"Chargepoint {chargepoint_uuid} already connected. Updating connection.")
-            existing_websocket = self.chargepoint_connections[chargepoint_uuid]
-            if existing_websocket:
-                await existing_websocket.close()
-
         chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
         chargepoint_name = chargepoint.name
+        
+        logger.info(f"Adding CP connection to proxy: {chargepoint_name}")
+        
+        if chargepoint_uuid in self.chargepoint_connections:
+            if websocket is None:
+                logger.info(f"CP {chargepoint_name} is already connected. Skipping connection.")
+                return
+            else:
+                logger.warning(f"CP {chargepoint_name} already connected. Updating existing connection.")
+                existing_websocket = self.chargepoint_connections[chargepoint_uuid]
+                if existing_websocket:
+                    await existing_websocket.close()
+                    logger.info(f"Closed existing websocket for CP {chargepoint_name}")
 
-        logger.info(f"Adding chargepoint connection: {chargepoint_name}")
         if websocket:
             self.chargepoint_connections[chargepoint_uuid] = websocket
+            logger.info(f"New websocket connection added for CP {chargepoint_name}")
         else:
-            # If no websocket is provided (e.g., during a reset), we'll just update the status
             if chargepoint_uuid in self.chargepoint_connections:
                 del self.chargepoint_connections[chargepoint_uuid]
+                logger.info(f"Removed existing connection for CP {chargepoint_name}")
+            logger.info(f"No new websocket provided for CP {chargepoint_name}. Connection status will be updated.")
         
         await update_chargepoint_connection_status_async(chargepoint_uuid, 'Connected')
-        logger.info(f"Updated connection for chargepoint: {chargepoint_name}")
+        logger.info(f"Updated connection status to 'Connected' for CP {chargepoint_name}")
 
         await create_log_entry_async(
             chargepoint_uuid=chargepoint_uuid,
             event_type='Connection',
             action="Chargepoint Connection Updated",
             from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-            to_entity={"name": "System", "type": "System"},
-            message=f"Chargepoint {chargepoint_name} connection updated",
+            to_entity={"name": "Proxy", "type": "System"},
+            message=f"CP {chargepoint_name} connection updated in proxy",
             level='INFO'
         )
 
         authorizations = await get_authorizations_by_chargepoint_uuid_async(chargepoint_uuid)
+        logger.info(f"Initiating CSMS connections for CP {chargepoint_name}. Total authorizations: {len(authorizations)}")
         for authorization in authorizations:
             await self._connect_to_csms(chargepoint_uuid, authorization)
+
+        logger.info(f"CP connection added to proxy: {chargepoint_name}")
+
     async def _remove_chargepoint_connection(self, chargepoint_uuid: str):
+        logger.info(f"Removing CP connection: {chargepoint_uuid}")
         chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
         chargepoint_name = chargepoint.name
 
-        logger.info(f"Removing chargepoint connection: {chargepoint_name}")
+        logger.debug(f"Removing CP connection: {chargepoint_name}")
         if chargepoint_uuid in self.chargepoint_connections:
             websocket = self.chargepoint_connections.pop(chargepoint_uuid)
             await websocket.close()
             await update_chargepoint_connection_status_async(chargepoint_uuid, 'Disconnected')
-            logger.info(f"Removed chargepoint connection for chargepoint: {chargepoint_name}")
+            logger.debug(f"Removed CP connection for CP {chargepoint_name}")
 
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
@@ -219,23 +231,32 @@ class ConnectionManager:
                 message=f"Chargepoint {chargepoint_name} disconnected",
                 level='INFO'
             )
+        else:
+            logger.warning(f"No existing connection found for CP {chargepoint_name}")
+        logger.info(f"CP connection removed: {chargepoint_uuid}")
+
 
     async def _add_csms_connection(self, chargepoint_uuid: str, authorization: Authorization, websocket: websockets.WebSocketClientProtocol):
         chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
         chargepoint_name = chargepoint.name
         csms_name = authorization.csms_name
 
-        logger.info(f"Adding CSMS connection: {csms_name} for chargepoint: {chargepoint_name}")
+        logger.info(f"Adding CSMS connection {csms_name} to proxy for CP {chargepoint_name}")
+
         if authorization.uuid in self.closed_authorizations:
             await websocket.close()
-            logger.info(f"Rejected connection for closed authorization: {csms_name}")
+            logger.warning(f"Rejected connection for closed authorization: {csms_name} for CP {chargepoint_name}")
             return
+
         if chargepoint_uuid not in self.csms_connections:
             self.csms_connections[chargepoint_uuid] = []
+            logger.debug(f"Created new CSMS connections list for CP {chargepoint_name}")
+
         self.csms_connections[chargepoint_uuid].append((websocket, authorization))
         await update_authorization_connection_status_async(authorization.uuid, 'Connected')
+        
         primary_status = "(P)" if authorization.is_primary else "(S)"
-        logger.info(f"Added {primary_status} CSMS connection for authorization: {csms_name}, total CSMS connections for chargepoint {chargepoint_name}: {len(self.csms_connections[chargepoint_uuid])}")
+        logger.info(f"Added {primary_status} CSMS connection {csms_name} to proxy for CP {chargepoint_name}. Total CSMS connections for this chargepoint: {len(self.csms_connections[chargepoint_uuid])}")
 
         await create_log_entry_async(
             chargepoint_uuid=chargepoint_uuid,
@@ -244,28 +265,29 @@ class ConnectionManager:
             action="CSMS Connected",
             from_entity={"name": csms_name, "type": "CSMS", "uuid": str(authorization.uuid)},
             to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-            message=f"CSMS {csms_name} {primary_status} connected to chargepoint {chargepoint_name}",
-            level='INFO'
-        )
+            message=f"CSMS {csms_name} {primary_status} connected to CP {chargepoint_name}",
+        level='INFO'
+    )
 
     async def _remove_csms_connection(self, chargepoint_uuid: str, authorization_uuid: str):
+        logger.info(f"Removing CSMS connection: {authorization_uuid} for CP {chargepoint_uuid}")
         chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
         chargepoint_name = chargepoint.name
         authorization = await sync_to_async(Authorization.objects.get)(uuid=authorization_uuid)
         csms_name = authorization.csms_name
 
-        logger.info(f"Removing CSMS connection: {csms_name} for chargepoint: {chargepoint_name}")
+        logger.debug(f"Removing CSMS connection: {csms_name} for CP {chargepoint_name}")
         if chargepoint_uuid in self.csms_connections:
             connections = self.csms_connections[chargepoint_uuid]
             self.csms_connections[chargepoint_uuid] = [
                 (ws, auth) for ws, auth in connections if auth.uuid != authorization_uuid
             ]
             await update_authorization_connection_status_async(authorization_uuid, 'Disconnected')
-            logger.info(f"Removed specific CSMS connection for authorization: {csms_name}, remaining connections for chargepoint {chargepoint_name}: {len(self.csms_connections[chargepoint_uuid])}")
+            logger.debug(f"Removed specific CSMS connection for authorization: {csms_name}, remaining connections for CP {chargepoint_name}: {len(self.csms_connections[chargepoint_uuid])}")
             if not self.csms_connections[chargepoint_uuid]:
                 del self.csms_connections[chargepoint_uuid]
             self.disconnected_csms.add((chargepoint_uuid, authorization_uuid))
-            logger.info(f"Added to disconnected CSMS set: {csms_name} for chargepoint: {chargepoint_name}")
+            logger.debug(f"Added to disconnected CSMS set: {csms_name} for CP {chargepoint_name}")
 
             primary_status = "(P)" if authorization.is_primary else "(S)"
             await create_log_entry_async(
@@ -275,46 +297,61 @@ class ConnectionManager:
                 action="CSMS Disconnected",
                 from_entity={"name": csms_name, "type": "CSMS", "uuid": str(authorization_uuid)},
                 to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                message=f"CSMS {csms_name} {primary_status} disconnected from chargepoint {chargepoint_name}",
+                message=f"CSMS {csms_name} {primary_status} disconnected from CP {chargepoint_name}",
                 level='INFO'
             )
+        else:
+            logger.warning(f"No existing CSMS connections found for CP {chargepoint_name}")
+        logger.info(f"CSMS connection removed: {authorization_uuid} for CP {chargepoint_uuid}")
+
 
     async def _connect_to_csms(self, chargepoint_uuid: str, authorization: Authorization) -> bool:
         chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
         chargepoint_name = chargepoint.name
         csms_name = authorization.csms_name
 
-        logger.info(f"Connecting to CSMS for chargepoint: {chargepoint_name}, authorization: {csms_name}")
-        csms_url = authorization.connect_url.rstrip('/')
-        cp_id = authorization.cp_id
-        websocket_url = f"{csms_url}/{cp_id}"
+        logger.info(f"Initiating CSMS connection to CSMS {csms_name} for CP {chargepoint_name}")
+
         if chargepoint_uuid in self.csms_connections:
             if any(auth.uuid == authorization.uuid for _, auth in self.csms_connections[chargepoint_uuid]):
-                logger.info(f"CSMS {csms_name} for chargepoint {chargepoint_name} is already connected.")
+                logger.info(f"CSMS {csms_name} for CP {chargepoint_name} is already connected. Skipping connection attempt.")
                 return True
 
-        # Track connection attempts
         if chargepoint_uuid not in self.connection_attempts:
             self.connection_attempts[chargepoint_uuid] = set()
         if authorization.uuid in self.connection_attempts[chargepoint_uuid]:
-            logger.info(f"Already attempting connection to CSMS {csms_name} for chargepoint {chargepoint_name}.")
+            logger.info(f"Connection attempt to CSMS {csms_name} for CP {chargepoint_name} is already in progress. Skipping new attempt.")
             return False
+
         self.connection_attempts[chargepoint_uuid].add(authorization.uuid)
+        logger.debug(f"Added connection attempt for CSMS {csms_name} to tracking set.")
+
+        csms_url = authorization.connect_url.rstrip('/')
+        cp_id = authorization.cp_id
+        websocket_url = f"{csms_url}/{cp_id}"
 
         try:
+            logger.debug(f"Attempting WebSocket connection to {websocket_url} for CSMS {csms_name}")
             ws = await websockets.connect(websocket_url, subprotocols=['ocpp1.6'])
+            logger.info(f"WebSocket connection established to CSMS {csms_name} for CP {chargepoint_name} at {websocket_url}")
+            
             await self._add_csms_connection(chargepoint_uuid, authorization, ws)
-            logger.info(f"Connected to CSMS {csms_name} at {websocket_url} for ChargePoint {chargepoint_name}")
-
+            
             asyncio.create_task(self._handle_csms_messages(ws, authorization.uuid, chargepoint_uuid))
+            logger.debug(f"Created task to handle messages for CSMS {csms_name}")
+            
             self.connection_attempts[chargepoint_uuid].remove(authorization.uuid)
-            return True
+            logger.debug(f"Removed connection attempt for CSMS {csms_name} from tracking set.")
+            
+            success = True
         except Exception as e:
-            logger.error(f"Failed to connect to CSMS {csms_name} at {websocket_url}: {str(e)}")
+            logger.error(f"Failed to connect to CSMS {csms_name} at {websocket_url} for CP {chargepoint_name}: {str(e)}")
             if (chargepoint_uuid, authorization.uuid) not in self.disconnected_csms:
                 self.disconnected_csms.add((chargepoint_uuid, authorization.uuid))
-                logger.info(f"Added to disconnected CSMS set due to connection failure: {csms_name} for chargepoint: {chargepoint_name}")
+                logger.info(f"Added CSMS {csms_name} for CP {chargepoint_name} to disconnected CSMS set.")
+            
             self.connection_attempts[chargepoint_uuid].remove(authorization.uuid)
+            logger.debug(f"Removed failed connection attempt for CSMS {csms_name} from tracking set.")
             
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
@@ -323,20 +360,24 @@ class ConnectionManager:
                 action="CSMS Connection Failed",
                 from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
                 to_entity={"name": csms_name, "type": "CSMS", "uuid": str(authorization.uuid)},
-                message=f"Failed to connect to CSMS {csms_name} for chargepoint {chargepoint_name}",
+                message=f"Failed to connect to CSMS {csms_name} for CP {chargepoint_name}",
                 level='ERROR',
                 raw_message=f"Error: {str(e)}"
             )
-            return False
+            success = False
+        
+        logger.info(f"CSMS connection {'established' if success else 'failed'} to CSMS {csms_name} for CP {chargepoint_name}")
+        return success
 
     async def send_to_csms(self, csms_uuid: str, message: str):
         for chargepoint_uuid, connections in self.csms_connections.items():
             for websocket, authorization in connections:
                 if authorization.uuid == csms_uuid:
                     primary_status = "(P)" if authorization.is_primary else "(S)"
-                    logger.info(f"-> [CSMS] {authorization.csms_name} {primary_status} {message}")
+                    chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
+                    chargepoint_name = chargepoint.name
+                    logger.info(f"Sending message to CSMS {authorization.csms_name} {primary_status} from CP {chargepoint_name}. Message: {message}")
                     try:
-                        # Convert message to JSON with string UUIDs
                         parsed_message = json.loads(message)
                         message_with_str_uuids = json.dumps(parsed_message, default=str)
                         await websocket.send(message_with_str_uuids)
@@ -373,18 +414,19 @@ class ConnectionManager:
         websocket = self.chargepoint_connections.get(chargepoint_uuid)
 
         if websocket is None:
-            logger.warning(f"No chargepoint connection for {chargepoint_uuid}, message not sent: {message}")
+            logger.warning(f"No CP connection for {chargepoint_uuid}, message not sent: {message}")
             return
 
         try:
             authorization = await sync_to_async(Authorization.objects.get)(uuid=csms_uuid)
             if not authorization.is_primary:
-                logger.warning(f"Not sending message from secondary CSMS {authorization.csms_name} to chargepoint {chargepoint_uuid}: {message}")
+                logger.warning(f"Not sending message from secondary CSMS {authorization.csms_name} to CP {chargepoint_uuid}: {message}")
                 return
             
             chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
             chargepoint_name = chargepoint.name
-            logger.info(f"-> [CP] {chargepoint_name} {message}")
+            logger.info(f"Sending message to CP {chargepoint_name} from CSMS {authorization.csms_name}. Message: {message}")
+            
             # Convert message to JSON with string UUIDs
             parsed_message = json.loads(message)
             message_with_str_uuids = json.dumps(parsed_message, default=str)
@@ -402,7 +444,7 @@ class ConnectionManager:
                 level='INFO'
             )
         except websockets.exceptions.ConnectionClosed as e:
-            error_message = f"WebSocket connection closed for chargepoint {chargepoint_name}: {str(e)}"
+            error_message = f"WebSocket connection closed for CP {chargepoint_name}: {str(e)}"
             logger.error(error_message)
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
@@ -417,7 +459,7 @@ class ConnectionManager:
             )
             await self._remove_chargepoint_connection(chargepoint_uuid)
         except Exception as e:
-            error_message = f"Failed to send message to chargepoint {chargepoint_name}: {str(e)}"
+            error_message = f"Failed to send message to CP {chargepoint_name}: {str(e)}"
             logger.error(error_message)
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
@@ -439,7 +481,7 @@ class ConnectionManager:
             chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
             chargepoint_name = chargepoint.name
             async for message in csms_ws:
-                logger.info(f"<- [CSMS] {csms_name} {primary_status} {message}")
+                logger.info(f"Received message from CSMS {csms_name} {primary_status} for CP {chargepoint_name}. Message: {message}")
                 await self.message_processor.process_message_from_csms(chargepoint_uuid, message, csms_uuid)
         except Exception as e:
             error_message = f"Error handling messages from CSMS {csms_name}: {str(e)}"
@@ -499,7 +541,7 @@ class ConnectionManager:
             chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
             chargepoint_name = chargepoint.name
 
-            logger.info(f"<- [CP] {chargepoint_name} {message}")
+            logger.info(f"Received message from CP {chargepoint_name}. Message: {message}")
             await self.message_processor.process_message_from_chargepoint(chargepoint_uuid, message)
 
             # Log the raw message being sent to the CSMS
@@ -510,32 +552,32 @@ class ConnectionManager:
                 event_type=event_type,
                 action="Message received from ChargePoint",
                 from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                to_entity={"name": "CSMS", "type": "CSMS"},  # Always provide a to_entity
+                to_entity={"name": "CSMS", "type": "CSMS"},
                 message=json.dumps(parsed_message, indent=2),
                 raw_message=message,
                 level='INFO'
             )
         except json.JSONDecodeError:
-            logger.error(f"Invalid JSON received from chargepoint {chargepoint_uuid}: {message}")
+            logger.error(f"Invalid JSON received from CP {chargepoint_uuid}: {message}")
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
                 event_type='Error',
                 action="Invalid JSON received",
                 from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
                 to_entity={"name": "System", "type": "System"},
-                message=f"Invalid JSON received from chargepoint {chargepoint_name}",
+                message=f"Invalid JSON received from CP {chargepoint_name}",
                 raw_message=message,
                 level='ERROR'
             )
         except Exception as e:
-            logger.error(f"Error processing message from chargepoint {chargepoint_uuid}: {str(e)}")
+            logger.error(f"Error processing message from CP {chargepoint_uuid}: {str(e)}")
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
                 event_type='Error',
                 action="Error processing message",
                 from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
                 to_entity={"name": "System", "type": "System"},
-                message=f"Error processing message from chargepoint {chargepoint_name}: {str(e)}",
+                message=f"Error processing message from CP {chargepoint_name}: {str(e)}",
                 raw_message=message,
                 level='ERROR'
             )
@@ -601,7 +643,7 @@ class ConnectionManager:
                 chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
                 chargepoint_name = chargepoint.name
                 csms_name = authorization.csms_name
-                logger.info(f"Successfully reconnected to CSMS {csms_name} for chargepoint {chargepoint_name}")
+                logger.info(f"Successfully reconnected to CSMS {csms_name} for CP {chargepoint_name}")
                 self.disconnected_csms.remove((chargepoint_uuid, authorization_uuid))
                 
                 await create_log_entry_async(
@@ -611,11 +653,11 @@ class ConnectionManager:
                     action="CSMS Reconnected",
                     from_entity={"name": csms_name, "type": "CSMS", "uuid": str(authorization_uuid)},
                     to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                    message=f"Successfully reconnected to CSMS {csms_name} for chargepoint {chargepoint_name}",
+                    message=f"Successfully reconnected to CSMS {csms_name} for CP {chargepoint_name}",
                     level='INFO'
                 )
         except Exception as e:
-            logger.error(f"Failed to reconnect to CSMS {authorization_uuid} for chargepoint {chargepoint_uuid}: {str(e)}")
+            logger.error(f"Failed to reconnect to CSMS {authorization_uuid} for CP {chargepoint_uuid}: {str(e)}")
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
                 authorization=authorization,
@@ -623,68 +665,124 @@ class ConnectionManager:
                 action="CSMS Reconnection Failed",
                 from_entity={"name": authorization.csms_name, "type": "CSMS", "uuid": str(authorization_uuid)},
                 to_entity={"name": chargepoint.name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                message=f"Failed to reconnect to CSMS {authorization.csms_name} for chargepoint {chargepoint.name}",
+                message=f"Failed to reconnect to CSMS {authorization.csms_name} for CP {chargepoint.name}",
                 level='ERROR',
                 raw_message=str(e)
             )
             await asyncio.sleep(RECONNECT_INTERVAL)
 
     async def close_chargepoint_connections(self, chargepoint_uuid: str):
-        chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
-        chargepoint_name = chargepoint.name
+        logger.info(f"Starting process to close all connections for CP {chargepoint_uuid}")
+        try:
+            chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
+            chargepoint_name = chargepoint.name
 
-        logger.info(f"Closing all connections for chargepoint {chargepoint_name}")
+            logger.info(f"Closing connections for CP {chargepoint_name}")
 
-        if chargepoint_uuid in self.chargepoint_connections:
-            await self._remove_chargepoint_connection(chargepoint_uuid)
-        
-        if chargepoint_uuid in self.csms_connections:
-            for websocket, authorization in self.csms_connections[chargepoint_uuid]:
-                await self._remove_csms_connection(chargepoint_uuid, authorization.uuid)
+            # Close CP connection
+            if chargepoint_uuid in self.chargepoint_connections:
+                logger.info(f"Removing CP connection for {chargepoint_name}")
+                await self._remove_chargepoint_connection(chargepoint_uuid)
+                logger.info(f"Successfully removed CP connection for {chargepoint_name}")
+            else:
+                logger.info(f"No active CP connection found for {chargepoint_name}")
             
+            # Close CSMS connections
             if chargepoint_uuid in self.csms_connections:
-                del self.csms_connections[chargepoint_uuid]
-        
-        logger.info(f"Closed all connections for chargepoint {chargepoint_name}")
+                csms_connections = self.csms_connections[chargepoint_uuid]
+                logger.info(f"Found {len(csms_connections)} CSMS connections for {chargepoint_name}")
+                for websocket, authorization in csms_connections:
+                    logger.info(f"Removing CSMS connection for authorization {authorization.uuid} (CSMS {authorization.csms_name})")
+                    await self._remove_csms_connection(chargepoint_uuid, authorization.uuid)
+                    logger.info(f"Successfully removed CSMS connection for authorization {authorization.uuid}")
+                
+                if chargepoint_uuid in self.csms_connections:
+                    del self.csms_connections[chargepoint_uuid]
+                    logger.info(f"Cleared all CSMS connections for {chargepoint_name}")
+            else:
+                logger.info(f"No CSMS connections found for {chargepoint_name}")
+            
+            logger.info(f"Successfully closed all connections for CP {chargepoint_name}")
 
-        await create_log_entry_async(
-            chargepoint_uuid=chargepoint_uuid,
-            event_type='Connection',
-            action="All Connections Closed",
-            from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-            message=f"Closed all connections for chargepoint {chargepoint_name}",
-            level='INFO'
-        )
+            await create_log_entry_async(
+                chargepoint_uuid=chargepoint_uuid,
+                event_type='Connection',
+                action="All Connections Closed",
+                from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
+                to_entity={"name": "System", "type": "System"},
+                message=f"Closed all connections for CP {chargepoint_name}",
+                level='INFO'
+            )
+        except Exception as e:
+            logger.error(f"Error while closing connections for CP {chargepoint_uuid}: {str(e)}", exc_info=True)
+            await create_log_entry_async(
+                chargepoint_uuid=chargepoint_uuid,
+                event_type='Error',
+                action="Close Connections Failed",
+                from_entity={"name": "System", "type": "System"},
+                to_entity={"name": "Chargepoint", "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
+                message=f"Failed to close connections for CP {chargepoint_uuid}: {str(e)}",
+                level='ERROR'
+            )
+        finally:
+            logger.info(f"Finished process of closing connections for CP {chargepoint_uuid}")
 
     async def reset_chargepoint_connections(self, chargepoint_uuid: str):
-        logger.info(f"Resetting connections for chargepoint {chargepoint_uuid}")
-        try:
-            # Close existing connections
-            if chargepoint_uuid in self.chargepoint_connections:
+        if chargepoint_uuid not in self.connection_locks:
+            self.connection_locks[chargepoint_uuid] = asyncio.Lock()
+        
+        async with self.connection_locks[chargepoint_uuid]:
+            logger.info(f"Starting reset process for CP {chargepoint_uuid}")
+            try:
+                logger.debug(f"Current state before reset: {self.get_connection_state(chargepoint_uuid)}")
+                
+                # Step 1: Close existing connections
+                logger.info(f"Closing existing CP connection for {chargepoint_uuid}")
                 await self._remove_chargepoint_connection(chargepoint_uuid)
-            if chargepoint_uuid in self.csms_connections:
-                for websocket, authorization in self.csms_connections[chargepoint_uuid]:
-                    await self._remove_csms_connection(chargepoint_uuid, authorization.uuid)
-                del self.csms_connections[chargepoint_uuid]
+                
+                if chargepoint_uuid in self.csms_connections:
+                    logger.info(f"Closing existing CSMS connections for CP {chargepoint_uuid}")
+                    csms_connections = self.csms_connections[chargepoint_uuid].copy()
+                    for websocket, authorization in csms_connections:
+                        logger.debug(f"Closing CSMS connection for authorization {authorization.uuid}")
+                        await self._remove_csms_connection(chargepoint_uuid, authorization.uuid)
+                    self.csms_connections.pop(chargepoint_uuid, None)
+                else:
+                    logger.info(f"No existing CSMS connections found for CP {chargepoint_uuid}")
 
-            # Re-fetch chargepoint details
-            access_token = get_access_token()
-            details = await self.get_chargepoint_details(chargepoint_uuid, access_token)
-            if not details:
-                logger.error(f"Failed to fetch details for chargepoint {chargepoint_uuid}")
+                # Step 2: Wait for a short period to ensure all connections are fully closed
+                await asyncio.sleep(2)  # Wait for 2 seconds
+
+                # Step 3: Re-establish connections
+                logger.info(f"Re-establishing CP connection for {chargepoint_uuid}")
+                await self._add_chargepoint_connection(chargepoint_uuid, None)
+                
+                logger.info(f"Fetching authorizations for CP {chargepoint_uuid}")
+                authorizations = await get_authorizations_by_chargepoint_uuid_async(chargepoint_uuid)
+                
+                logger.info(f"Re-establishing CSMS connections for CP {chargepoint_uuid}")
+                for authorization in authorizations:
+                    logger.debug(f"Connecting to CSMS for authorization {authorization.uuid}")
+                    await self._connect_to_csms(chargepoint_uuid, authorization)
+
+                logger.info(f"Successfully reset connections for CP {chargepoint_uuid}")
+                logger.debug(f"New state after reset: {self.get_connection_state(chargepoint_uuid)}")
+                return True
+            except Exception as e:
+                logger.error(f"Error resetting connections for CP {chargepoint_uuid}: {str(e)}", exc_info=True)
                 return False
 
-            # Re-establish chargepoint connection
-            # Note: We're passing None as the websocket here, as we don't have an active websocket during a reset
-            await self._add_chargepoint_connection(chargepoint_uuid, None)
-
-            # Re-establish CSMS connections
-            authorizations = await get_authorizations_by_chargepoint_uuid_async(chargepoint_uuid)
-            for authorization in authorizations:
-                await self._connect_to_csms(chargepoint_uuid, authorization)
-
-            logger.info(f"Successfully reset connections for chargepoint {chargepoint_uuid}")
-            return True
-        except Exception as e:
-            logger.error(f"Error resetting connections for chargepoint {chargepoint_uuid}: {str(e)}", exc_info=True)
-            return False
+    def get_connection_state(self, chargepoint_uuid: str) -> dict:
+        state = {
+            "chargepoint_connected": chargepoint_uuid in self.chargepoint_connections,
+            "csms_connections": []
+        }
+        if chargepoint_uuid in self.csms_connections:
+            for _, auth in self.csms_connections[chargepoint_uuid]:
+                state["csms_connections"].append({
+                    "uuid": str(auth.uuid),
+                    "csms_name": auth.csms_name,
+                    "is_primary": auth.is_primary,
+                    "connection_status": auth.connection_status
+                })
+        return state

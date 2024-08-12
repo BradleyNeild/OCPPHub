@@ -7,6 +7,7 @@ from connection_manager import ConnectionManager
 from proxy_utils import get_ip_address, get_access_token
 import os
 import signal
+import json
 
 # Load environment variables early
 load_dotenv()
@@ -92,16 +93,19 @@ async def set_primary_authorization(request: web.Request) -> web.Response:
     except Exception as e:
         logger.error(f'Error setting primary authorization {authorization_uuid} for chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
         return web.json_response({'error': 'Internal server error', 'details': str(e)}, status=500)
-    
+
 async def reset_chargepoint_connections(request: web.Request) -> web.Response:
     try:
         data = await request.json()
         chargepoint_uuid = data.get('chargepoint_uuid')
-
+        
+        logger.info(f"Received request to reset connections for chargepoint {chargepoint_uuid}")
+        
         if not chargepoint_uuid:
             logger.error('chargepoint_uuid is required')
             return web.json_response({'error': 'chargepoint_uuid is required'}, status=400)
-
+        
+        logger.info(f"Initiating connection reset for chargepoint {chargepoint_uuid}")
         success = await connection_manager.reset_chargepoint_connections(chargepoint_uuid)
         
         if success:
@@ -109,10 +113,10 @@ async def reset_chargepoint_connections(request: web.Request) -> web.Response:
             return web.json_response({'status': 'success'})
         else:
             logger.error(f'Failed to reset connections for chargepoint {chargepoint_uuid}')
-            return web.json_response({'error': 'Failed to reset connections', 'details': 'Check proxy logs for more information'}, status=500)
+            return web.json_response({'error': 'Failed to reset connections'}, status=500)
     except Exception as e:
         logger.error(f'Error resetting connections for chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
-        return web.json_response({'error': 'Internal server error', 'details': str(e)}, status=500)
+        return web.json_response({'error': str(e)}, status=500)
 
 async def main():
     """
@@ -126,17 +130,18 @@ async def main():
     ip_address = get_ip_address()
     logger.info(f"Starting proxy server on IP address: {ip_address}")
 
-    aiohttp_app = web.Application()
-    aiohttp_app.add_routes([
+    app = web.Application()
+    app.add_routes([
         web.post('/api/close_authorization', close_authorization_connection),
-        web.post('/api/reset_chargepoint_connections', reset_chargepoint_connections),  # Corrected URL
+        web.post('/api/reset_chargepoint_connections', reset_chargepoint_connections),
         web.post('/api/set_primary_authorization', set_primary_authorization),
+        web.post('/api/restart_chargepoint', restart_chargepoint),
     ])
 
-    aiohttp_runner = web.AppRunner(aiohttp_app)
-    await aiohttp_runner.setup()
-    aiohttp_site = web.TCPSite(aiohttp_runner, '0.0.0.0', 8999)  # REST API on port 8999
-    await aiohttp_site.start()
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', 8999)  # REST API on port 8999
+    await site.start()
 
     loop = asyncio.get_event_loop()
     for s in (signal.SIGINT, signal.SIGTERM):
@@ -168,4 +173,5 @@ async def shutdown(signal, loop):
     results = await asyncio.gather(*tasks, return_exceptions=True)
     loop.stop()
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

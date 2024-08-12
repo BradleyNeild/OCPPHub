@@ -172,7 +172,7 @@ def authorization_create(request, uuid):
             if not Authorization.objects.filter(chargepoint=chargepoint).exists():
                 authorization.is_primary = True
             authorization.save()
-            reset_connections_for_chargepoint(uuid)
+            reset_chargepoint_connections(uuid)
             return redirect('authorization_list', uuid=uuid)
     else:
         form = AuthorizationForm()
@@ -188,7 +188,7 @@ def authorization_edit(request, chargepoint_uuid, auth_uuid):
         form = AuthorizationForm(request.POST, instance=authorization)
         if form.is_valid():
             form.save()
-            reset_connections_for_chargepoint(chargepoint_uuid)
+            reset_chargepoint_connections(chargepoint_uuid)
             return redirect('authorization_list', uuid=chargepoint_uuid)
     else:
         form = AuthorizationForm(instance=authorization)
@@ -202,7 +202,7 @@ def authorization_delete(request, chargepoint_uuid, auth_uuid):
     authorization = get_object_or_404(Authorization, uuid=auth_uuid, chargepoint=chargepoint)
     if request.method == 'POST':
         authorization.delete()
-        reset_connections_for_chargepoint(chargepoint_uuid)
+        reset_chargepoint_connections(chargepoint_uuid)
         return redirect('authorization_list', uuid=chargepoint_uuid)
     return render(request, 'authorization/authorization_confirm_delete.html', {'authorization': authorization, 'chargepoint': chargepoint})
 # OAuth Views
@@ -368,7 +368,7 @@ def chargepoint_edit(request, uuid):
         form = ChargePointForm(request.POST, instance=chargepoint)
         if form.is_valid():
             form.save()
-            reset_connections_for_chargepoint(uuid)
+            reset_chargepoint_connections(uuid)
             return redirect('dashboard')
     else:
         form = ChargePointForm(instance=chargepoint)
@@ -809,7 +809,6 @@ def set_primary_authorization(request, chargepoint_uuid, authorization_uuid):
         chargepoint = get_object_or_404(ChargePoint, uuid=chargepoint_uuid, user=request.user)
         authorization = get_object_or_404(Authorization, uuid=authorization_uuid, chargepoint=chargepoint)
 
-        # Get all authorizations for this chargepoint
         all_authorizations = Authorization.objects.filter(chargepoint=chargepoint)
         authorizations_data = [
             {
@@ -819,24 +818,21 @@ def set_primary_authorization(request, chargepoint_uuid, authorization_uuid):
             } for auth in all_authorizations
         ]
 
-        # Notify proxy server about the change
         proxy_response = notify_proxy_server_set_primary(chargepoint_uuid, authorization_uuid, authorizations_data)
         
         if proxy_response.get('status') == 'success':
-            # Update local database to reflect the change
             Authorization.objects.filter(chargepoint=chargepoint).update(is_primary=False)
             authorization.is_primary = True
             authorization.save()
 
-            # Reset connections for the chargepoint
-            reset_success = reset_connections_for_chargepoint(chargepoint_uuid)
+            # Use reset_chargepoint_connections instead of reset_chargepoint_connections
+            reset_success = reset_chargepoint_connections(chargepoint_uuid)
 
             if reset_success:
                 logger.info(f"Successfully reset connections for chargepoint {chargepoint_uuid}")
             else:
                 logger.error(f"Failed to reset connections for chargepoint {chargepoint_uuid}")
 
-            # Prepare response data
             primary_auth = {
                 'uuid': str(authorization.uuid),
                 'csms_name': authorization.csms_name,
@@ -861,24 +857,6 @@ def set_primary_authorization(request, chargepoint_uuid, authorization_uuid):
         logger.error(f"Error setting primary authorization: {str(e)}", exc_info=True)
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-def reset_connections_for_chargepoint(chargepoint_uuid):
-    proxy_url = os.getenv('PROXY_SERVER_URL')
-    reset_endpoint = f"{proxy_url}/api/reset_chargepoint_connections"
-    
-    try:
-        response = requests.post(reset_endpoint, json={'chargepoint_uuid': str(chargepoint_uuid)})
-        response.raise_for_status()
-        response_data = response.json()
-        if response_data.get('status') == 'success':
-            logger.info(f"Successfully reset connections for chargepoint {chargepoint_uuid}")
-            return True
-        else:
-            logger.error(f"Failed to reset connections for chargepoint {chargepoint_uuid}: {response_data.get('error', 'Unknown error')}")
-            return False
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Error communicating with proxy server to reset connections for chargepoint {chargepoint_uuid}: {str(e)}")
-        return False
-
 @login_required
 @require_POST
 def reset_chargepoint_connections(request):
@@ -897,20 +875,16 @@ def reset_chargepoint_connections(request):
         
         response = requests.post(reset_endpoint, json={'chargepoint_uuid': str(chargepoint_uuid)})
         
-        response_data = response.json()
-        if response.status_code == 200 and response_data.get('status') == 'success':
+        if response.status_code == 200:
             logger.info(f'Successfully reset connections for chargepoint {chargepoint_uuid}')
             return JsonResponse({'status': 'success'})
         else:
-            error_message = response_data.get('error', 'Unknown error occurred')
+            error_message = response.json().get('error', 'Unknown error occurred')
             logger.error(f'Failed to reset connections for chargepoint {chargepoint_uuid}: {error_message}')
             return JsonResponse({'error': error_message}, status=500)
-    except requests.exceptions.RequestException as e:
-        logger.error(f'Error communicating with proxy server: {str(e)}', exc_info=True)
-        return JsonResponse({'error': f'Failed to communicate with proxy server: {str(e)}'}, status=500)
     except Exception as e:
-        logger.error(f'Unexpected error resetting connections for chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
-        return JsonResponse({'error': f'An unexpected error occurred: {str(e)}'}, status=500)
+        logger.error(f'Error resetting connections for chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
+        return JsonResponse({'error': str(e)}, status=500)
 
 def notify_proxy_server_set_primary(chargepoint_uuid, authorization_uuid, authorizations_data):
     proxy_url = os.getenv('PROXY_SERVER_URL')
