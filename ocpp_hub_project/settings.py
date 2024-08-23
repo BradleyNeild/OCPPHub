@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',  # Required by allauth
+    'django_pagination_bootstrap',
 
     # Third-party apps
     'rest_framework',
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',  # This should be before your custom middleware
     'allauth.account.middleware.AccountMiddleware',  # Ensure allauth middleware is included
     'ocpp_hub_app.middleware.EmailVerificationRequiredMiddleware',  # Custom middleware after auth middleware
+    'django_pagination_bootstrap.middleware.PaginationMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

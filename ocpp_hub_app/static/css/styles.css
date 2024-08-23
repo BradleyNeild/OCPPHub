@@ -1,25 +1,118 @@
-/* General Button Styles */
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+}
+
+.container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+    width: 100%;
+    max-width: none;
+}
+
+
+/* Button Styles */
 .btn {
     border-radius: 4px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .btn:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Card Styles */
+.card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.card-body {
+    background-color: #ffffff;
+}
+
+/* Table Styles */
+.table-responsive {
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.table td, .table th {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Status Badge Styles */
+.status-badge {
+    padding: 0.25em 0.6em;
+    border-radius: 10rem;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    display: inline-block;
+}
+
+.status-connected {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-disconnected {
+    background-color: #dc3545;
+    color: white;
+}
+
 /* Filter Bar Styles */
+.search-bar {
+    margin-bottom: 20px;
+}
+
 #filterBarButton {
     background-color: #f8f9fa;
     border: 1px solid #ced4da;
     text-align: left;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     color: #495057;
     font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 #filterBarButton:hover {
@@ -27,57 +120,224 @@
     color: #343a40;
 }
 
-.filters .btn {
-    min-width: 150px;
-    margin: 2px;
-    color: #fff;
+#filterButtonsContainer {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 10px;
 }
 
-.filters .btn-light {
-    background-color: #e9ecef;
-    border-color: #dee2e6;
+#filterButtonsContainer h5 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-weight: bold;
     color: #495057;
 }
 
-.filters .btn-light:hover {
-    background-color: #d6d8db;
-    border-color: #c6c8ca;
-    color: #343a40;
-}
-
-/* Table Styles */
-.table-fixed {
-    table-layout: fixed;
-    width: 100%;
-}
-
-.table-fixed thead th {
-    overflow: hidden;
-}
-
-.table-fixed tbody td {
-    overflow: hidden;
-    white-space: normal;
-    word-wrap: break-word;
-    word-break: break-word;
-}
-
-/* Card Styles */
-.card {
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-    background-color: #f8f9fa;
-    font-weight: bold;
-}
-
-.card-body {
+/* Event Type Button Styles */
+.event-type-button {
+    transition: all 0.3s ease;
+    margin: 4px;
+    min-width: 140px;
+    font-size: 0.9rem;
     background-color: #ffffff;
+    border-width: 2px;
+    border-style: solid;
+    color: #000000;  /* Black text */
 }
 
+.event-type-button:hover {
+    filter: brightness(95%);
+}
+
+.event-type-button.active {
+    color: #ffffff;  /* White text when active */
+}
+
+/* OCPP Messages */
+.event-type-button[data-event-type^="Authorize"],
+.event-type-button[data-event-type^="Boot"],
+.event-type-button[data-event-type^="Cancel"],
+.event-type-button[data-event-type^="Change"],
+.event-type-button[data-event-type^="Clear"],
+.event-type-button[data-event-type^="Data"],
+.event-type-button[data-event-type^="Diagnostics"],
+.event-type-button[data-event-type^="Firmware"],
+.event-type-button[data-event-type^="Get"],
+.event-type-button[data-event-type^="Heartbeat"],
+.event-type-button[data-event-type^="Meter"],
+.event-type-button[data-event-type^="Remote"],
+.event-type-button[data-event-type^="Reserve"],
+.event-type-button[data-event-type^="Reset"],
+.event-type-button[data-event-type^="Send"],
+.event-type-button[data-event-type^="Set"],
+.event-type-button[data-event-type^="Start"],
+.event-type-button[data-event-type^="Status"],
+.event-type-button[data-event-type^="Stop"],
+.event-type-button[data-event-type^="Trigger"],
+.event-type-button[data-event-type^="Unlock"],
+.event-type-button[data-event-type^="Update"] {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.event-type-button[data-event-type^="Authorize"].active,
+.event-type-button[data-event-type^="Boot"].active,
+.event-type-button[data-event-type^="Cancel"].active,
+.event-type-button[data-event-type^="Change"].active,
+.event-type-button[data-event-type^="Clear"].active,
+.event-type-button[data-event-type^="Data"].active,
+.event-type-button[data-event-type^="Diagnostics"].active,
+.event-type-button[data-event-type^="Firmware"].active,
+.event-type-button[data-event-type^="Get"].active,
+.event-type-button[data-event-type^="Heartbeat"].active,
+.event-type-button[data-event-type^="Meter"].active,
+.event-type-button[data-event-type^="Remote"].active,
+.event-type-button[data-event-type^="Reserve"].active,
+.event-type-button[data-event-type^="Reset"].active,
+.event-type-button[data-event-type^="Send"].active,
+.event-type-button[data-event-type^="Set"].active,
+.event-type-button[data-event-type^="Start"].active,
+.event-type-button[data-event-type^="Status"].active,
+.event-type-button[data-event-type^="Stop"].active,
+.event-type-button[data-event-type^="Trigger"].active,
+.event-type-button[data-event-type^="Unlock"].active,
+.event-type-button[data-event-type^="Update"].active {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+/* OCPP Responses */
+.event-type-button[data-event-type="CallResult"],
+.event-type-button[data-event-type="CallError"] {
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+
+.event-type-button[data-event-type="CallResult"].active,
+.event-type-button[data-event-type="CallError"].active {
+    background-color: #17a2b8;
+    color: #ffffff;
+}
+
+/* System Events */
+.event-type-button[data-event-type="Error"],
+.event-type-button[data-event-type="Information"],
+.event-type-button[data-event-type="Connection"],
+.event-type-button[data-event-type="ConnectionError"],
+.event-type-button[data-event-type="CONNECTION"],
+.event-type-button[data-event-type="SYSTEM"] {
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.event-type-button[data-event-type="Error"].active,
+.event-type-button[data-event-type="Information"].active,
+.event-type-button[data-event-type="Connection"].active,
+.event-type-button[data-event-type="ConnectionError"].active,
+.event-type-button[data-event-type="CONNECTION"].active,
+.event-type-button[data-event-type="SYSTEM"].active {
+    background-color: #ffc107;
+    color: #000000;  /* Black text for better contrast on yellow background */
+}
+
+/* Proxy Events */
+.event-type-button[data-event-type="MessageSent"],
+.event-type-button[data-event-type="MessageReceived"],
+.event-type-button[data-event-type="MessageError"] {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.event-type-button[data-event-type="MessageSent"].active,
+.event-type-button[data-event-type="MessageReceived"].active,
+.event-type-button[data-event-type="MessageError"].active {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+/* Toggle All Filters Button */
+#toggleAllFiltersButton {
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* Date and Search Inputs */
+#searchInput, #startDate, #endDate {
+    margin-bottom: 15px;
+}
+
+/* Timestamp Cell Styles */
 .timestamp-cell {
     display: flex;
     flex-direction: column;
+}
+
+/* Log Details Styles */
+.log-details {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.log-details pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    background-color: #f1f3f5;
+    border: 1px solid #d1d9e6;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 0.9em;
+}
+
+/* Section Header Styles */
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header .badge {
+    margin-left: 10px;
+    font-size: 0.9rem;
+}
+
+/* Pagination Styles */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.pagination-controls select {
+    width: auto;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Loading Spinner Styles */
+#loadingSpinner {
+    display: none;
+    margin-top: 20px;
+}
+
+/* Toggle Details Link */
+.toggle-details {
+    cursor: pointer;
+    color: #007bff;
+    text-decoration: underline;
+}
+
+.toggle-details:hover {
+    color: #0056b3;
 }

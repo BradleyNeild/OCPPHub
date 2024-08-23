@@ -127,8 +127,14 @@ async def main():
     """
     await connection_manager.initialize()
 
-    ip_address = get_ip_address()
+    ip_address = "172.21.0.32"  # Hardcoded IP address for the proxy service
     logger.info(f"Starting proxy server on IP address: {ip_address}")
+
+    # Print access information
+    print(f"Access the web interface using")
+    print(f"- http://172.21.0.31:8997/dashboard")
+    print(f"WebSocket/JSON endpoint for OCPP")
+    print(f"- ws://{ip_address}:8998/(Charge Point UUID)\n")
 
     app = web.Application()
     app.add_routes([

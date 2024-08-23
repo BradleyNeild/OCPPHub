@@ -73,18 +73,36 @@ def identify_event_type(parsed_message):
     action = parsed_message[2] if message_type_id == 2 else None
 
     event_types = {
-        'BootNotification': "Boot Notification",
-        'Heartbeat': "Heartbeat",
-        'MeterValues': "Meter Values",
         'Authorize': "Authorize",
-        'StartTransaction': "Start Transaction",
-        'StopTransaction': "Stop Transaction",
-        'StatusNotification': "Status Notification",
-        'FirmwareStatusNotification': "Firmware Status Notification",
-        'DiagnosticsStatusNotification': "Diagnostics Status Notification",
-        'DataTransfer': "Data Transfer",
-        3: "Call Result",
-        4: "Call Error"
+        'BootNotification': "BootNotification",
+        'CancelReservation': "CancelReservation",
+        'ChangeAvailability': "ChangeAvailability",
+        'ChangeConfiguration': "ChangeConfiguration",
+        'ClearCache': "ClearCache",
+        'ClearChargingProfile': "ClearChargingProfile",
+        'DataTransfer': "DataTransfer",
+        'DiagnosticsStatusNotification': "DiagnosticsStatusNotification",
+        'FirmwareStatusNotification': "FirmwareStatusNotification",
+        'GetCompositeSchedule': "GetCompositeSchedule",
+        'GetConfiguration': "GetConfiguration",
+        'GetDiagnostics': "GetDiagnostics",
+        'GetLocalListVersion': "GetLocalListVersion",
+        'Heartbeat': "Heartbeat",
+        'MeterValues': "MeterValues",
+        'RemoteStartTransaction': "RemoteStartTransaction",
+        'RemoteStopTransaction': "RemoteStopTransaction",
+        'ReserveNow': "ReserveNow",
+        'Reset': "Reset",
+        'SendLocalList': "SendLocalList",
+        'SetChargingProfile': "SetChargingProfile",
+        'StartTransaction': "StartTransaction",
+        'StatusNotification': "StatusNotification",
+        'StopTransaction': "StopTransaction",
+        'TriggerMessage': "TriggerMessage",
+        'UnlockConnector': "UnlockConnector",
+        'UpdateFirmware': "UpdateFirmware",
+        3: "CallResult",
+        4: "CallError"
     }
 
     return event_types.get(action, event_types.get(message_type_id, "Information"))

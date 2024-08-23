@@ -29,7 +29,7 @@ def configure_logging():
     error_logger = logging.getLogger('error_logger')
     
     if not logger.handlers:
-        file_handler = RotatingFileHandler('app.log', maxBytes=10*1024*1024, backupCount=5)
+        file_handler = RotatingFileHandler('app.log', maxBytes=2*1024*1024, backupCount=5)
         console_handler = logging.StreamHandler()
         
         file_formatter = JsonFormatter()
@@ -43,7 +43,7 @@ def configure_logging():
         logger.setLevel(logging.INFO)
 
     if not error_logger.handlers:
-        error_handler = RotatingFileHandler('error.log', maxBytes=10*1024*1024, backupCount=5)
+        error_handler = RotatingFileHandler('error.log', maxBytes=2*1024*1024, backupCount=5)
         error_handler.setFormatter(file_formatter)
         error_logger.addHandler(error_handler)
         error_logger.addHandler(console_handler)

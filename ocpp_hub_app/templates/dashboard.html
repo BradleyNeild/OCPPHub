@@ -2,86 +2,139 @@
 
 {% block title %}Dashboard{% endblock %}
 
+{% block extra_head %}
+<style>
+    .card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .search-bar {
+        margin-bottom: 10px;
+    }
+    .table-responsive {
+        margin-top: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        max-height: 400px;  /* Set a maximum height for the table container */
+        overflow-y: auto;  /* Enable vertical scrolling */
+    }
+    .table {
+        margin-bottom: 0;
+        table-layout: fixed;  /* Fixed table layout for consistent column widths */
+        width: 100%;
+    }
+    .table td, .table th {
+        padding: 0.5rem;
+        word-wrap: break-word;  /* Allow words to break and wrap onto the next line */
+        overflow-wrap: break-word;  /* Alternative property for word wrapping */
+        white-space: normal;  /* Allow text to wrap */
+    }
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa;
+        z-index: 1;
+    }
+    .status-badge {
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75em;
+        font-weight: bold;
+        display: inline-block;  /* Ensure badge stays on one line */
+    }
+    .status-connected {
+        background-color: #28a745;
+        color: white;
+    }
+    .status-disconnected {
+        background-color: #dc3545;
+        color: white;
+    }
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+    }
+    .action-buttons .btn {
+        padding: 2px 4px;
+        font-size: 0.75em;
+        white-space: nowrap;  /* Prevent button text from wrapping */
+    }
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .section-header .badge {
+        margin-left: 10px;
+        font-size: 0.9rem;
+    }
+    .container {
+        max-width: 95%;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
-    <h1 class="mt-5">Welcome, {{ request.user.username }}</h1>
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card mb-3">
-                <div class="card-header">
-                    Charge Points
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title" id="total-chargepoints">{{ status_info.total_chargepoints }}</h5>
-                    <p class="card-text">Total Charge Points</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3">
-                <div class="card-header">
-                    Authorizations
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title" id="total-authorizations">{{ status_info.total_authorizations }}</h5>
-                    <p class="card-text">Total Authorizations</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3">
-                <div class="card-header">
-                    Connected Authorizations
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title" id="connected-authorizations">{{ status_info.connected_authorizations }}</h5>
-                    <p class="card-text">Connected</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card mb-3">
-                <div class="card-header">
-                    Disconnected Authorizations
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title" id="disconnected-authorizations">{{ status_info.disconnected_authorizations }}</h5>
-                    <p class="card-text">Disconnected</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="d-flex justify-content-between align-items-center mt-5">
+    <h1 class="mt-3 mb-3">Welcome, {{ request.user.username }}</h1>
+    
+    <!-- Charge Points Section -->
+    <div class="section-header">
         <h2>Your Charge Points</h2>
-        <a href="{% url 'chargepoint_create' %}" class="btn btn-success">Add Charge Point</a>
-        <button id="refresh-button" class="btn btn-secondary">Refresh</button>
+        <span class="badge bg-primary" id="total-chargepoints">{{ status_info.total_chargepoints }}</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="search-bar">
+            <input type="text" id="chargepoint-search" class="form-control form-control-sm" placeholder="Search Charge Points">
+        </div>
+        <div>
+            <a href="{% url 'chargepoint_create' %}" class="btn btn-success btn-sm">Add Charge Point</a>
+            <button id="refresh-button" class="btn btn-secondary btn-sm">Refresh</button>
+        </div>
     </div>
     <div id="chargepoints-section" class="table-responsive">
         <!-- Chargepoints table will be dynamically loaded here -->
     </div>
 
-    <h2 class="mt-5">Your Authorizations</h2>
+    <!-- Authorizations Section -->
+    <div class="section-header mt-4">
+        <h2>Your Authorizations</h2>
+        <span class="badge bg-primary" id="total-authorizations">{{ status_info.total_authorizations }}</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="search-bar">
+            <input type="text" id="authorization-search" class="form-control form-control-sm" placeholder="Search Authorizations">
+        </div>
+    </div>
     <div id="authorizations-section" class="table-responsive">
         <!-- Authorizations table will be dynamically loaded here -->
-    </div>
-    
-    <div class="mt-5">
-        <h2>System Logs</h2>
-        <a href="{% url 'logs' %}" class="btn btn-primary">View Logs</a>
     </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const refreshButton = document.getElementById("refresh-button");
+    const chargepointSearch = document.getElementById("chargepoint-search");
+    const authorizationSearch = document.getElementById("authorization-search");
+
+    let chargepoints = [];
+    let authorizations = [];
 
     function loadDashboardData() {
         fetch("{% url 'dashboard_data' %}")
             .then(response => response.json())
             .then(data => {
-                updateChargepointsTable(data.chargepoints);
-                updateAuthorizationsTable(data.authorizations);
+                chargepoints = data.chargepoints;
+                authorizations = data.authorizations;
+                updateChargepointsTable();
+                updateAuthorizationsTable();
                 updateStatusInfo(data.status_info);
             })
             .catch(error => {
@@ -93,41 +146,43 @@ document.addEventListener("DOMContentLoaded", function() {
     function updateStatusInfo(statusInfo) {
         document.getElementById('total-chargepoints').textContent = statusInfo.total_chargepoints;
         document.getElementById('total-authorizations').textContent = statusInfo.total_authorizations;
-        document.getElementById('connected-authorizations').textContent = statusInfo.connected_authorizations;
-        document.getElementById('disconnected-authorizations').textContent = statusInfo.disconnected_authorizations;
     }
 
-    function updateChargepointsTable(chargepoints) {
+    function updateChargepointsTable() {
         const chargepointsSection = document.getElementById("chargepoints-section");
+        let filteredChargepoints = chargepoints.filter(chargepoint => 
+            chargepoint.name.toLowerCase().includes(chargepointSearch.value.toLowerCase())
+        );
+
         let chargepointsHtml = `
-            <table class="table table-striped mt-3">
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                        <th>Connection</th>
-                        <th>ID</th>
-                        <th>Actions</th>
+                        <th style="width: 20%;">Name</th>
+                        <th style="width: 15%;">ID</th>
+                        <th style="width: 20%;">Location</th>
+                        <th style="width: 10%;">Status</th>
+                        <th style="width: 10%;">Connection</th>
+                        <th style="width: 25%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
         `;
-        chargepoints.forEach(chargepoint => {
+        filteredChargepoints.forEach(chargepoint => {
             chargepointsHtml += `
                 <tr>
                     <td>${chargepoint.name}</td>
+                    <td>${chargepoint.uuid}</td>
                     <td>${chargepoint.location}</td>
                     <td>${chargepoint.status}</td>
-                    <td>${chargepoint.connection_status}</td>
-                    <td>${chargepoint.uuid}</td>
+                    <td><span class="status-badge ${chargepoint.connection_status === 'Connected' ? 'status-connected' : 'status-disconnected'}">${chargepoint.connection_status}</span></td>
                     <td>
-                        <div class="d-flex justify-content-start mt-2">
-                            <a href="${chargepoint.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
-                            <a href="${chargepoint.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
-                            <a href="${chargepoint.manage_authorizations_url}" class="btn btn-sm btn-info mr-2">Manage Authorizations</a>
-                            <a href="${chargepoint.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${chargepoint.log_count}</span></a>
-                            <button class="btn btn-sm btn-warning ml-2 reset-connections" data-chargepoint-uuid="${chargepoint.uuid}">Reset Connections</button>
+                        <div class="action-buttons">
+                            <a class="btn btn-sm btn-primary" href="${chargepoint.edit_url}">Edit</a>
+                            <a class="btn btn-sm btn-danger" href="${chargepoint.delete_url}">Delete</a>
+                            <a class="btn btn-sm btn-secondary" href="${chargepoint.view_logs_url}">Logs <span class="badge badge-light">${chargepoint.log_count}</span></a>
+                            <a class="btn btn-sm btn-info" href="${chargepoint.manage_authorizations_url}">Manage Auth</a>
+                            <button class="btn btn-sm btn-warning restart-chargepoint" data-chargepoint-uuid="${chargepoint.uuid}">Restart</button>
                         </div>
                     </td>
                 </tr>
@@ -140,40 +195,45 @@ document.addEventListener("DOMContentLoaded", function() {
         chargepointsSection.innerHTML = chargepointsHtml;
     }
 
-    function updateAuthorizationsTable(authorizations) {
+    function updateAuthorizationsTable() {
         const authorizationsSection = document.getElementById("authorizations-section");
+        let filteredAuthorizations = authorizations.filter(authorization => 
+            authorization.csms_name.toLowerCase().includes(authorizationSearch.value.toLowerCase()) ||
+            authorization.chargepoint_name.toLowerCase().includes(authorizationSearch.value.toLowerCase())
+        );
+
         let authorizationsHtml = `
-            <table class="table table-striped mt-3">
+            <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>UUID</th>
-                        <th>CSMS Name</th>
-                        <th>Connect URL</th>
-                        <th>Charge Point</th>
-                        <th>Chargepoint ID</th>
-                        <th>Connection</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th style="width: 15%;">CSMS Name</th>
+                        <th style="width: 15%;">Charge Point</th>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 10%;">Chargepoint ID</th>
+                        <th style="width: 15%;">Connect URL</th>
+                        <th style="width: 10%;">Status</th>
+                        <th style="width: 10%;">Connection</th>
+                        <th style="width: 15%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
         `;
-        authorizations.forEach(authorization => {
+        filteredAuthorizations.forEach(authorization => {
             authorizationsHtml += `
                 <tr>
-                    <td>${authorization.uuid}</td>
                     <td>${authorization.csms_name}</td>
-                    <td>${authorization.connect_url}</td>
                     <td>${authorization.chargepoint_name}</td>
+                    <td>${authorization.uuid}</td>
                     <td>${authorization.cp_id}</td>
-                    <td>${authorization.connection_status}</td>
-                    <td>${authorization.is_primary ? '<span class="badge badge-primary">Primary</span>' : 'Secondary'}</td>
+                    <td>${authorization.connect_url}</td>
+                    <td>${authorization.is_primary ? 'Primary' : 'Secondary'}</td>
+                    <td><span class="status-badge ${authorization.connection_status === 'Connected' ? 'status-connected' : 'status-disconnected'}">${authorization.connection_status}</span></td>
                     <td>
-                        <div class="d-flex justify-content-start mt-2">
-                            <a href="${authorization.edit_url}" class="btn btn-sm btn-primary mr-2">Edit</a>
-                            <a href="${authorization.delete_url}" class="btn btn-sm btn-danger mr-2">Delete</a>
-                            <a href="${authorization.view_logs_url}" class="btn btn-sm btn-secondary">View Logs <span class="badge badge-light">${authorization.log_count}</span></a>
-                            ${!authorization.is_primary ? `<button class="btn btn-sm btn-success ml-2 set-primary" data-chargepoint-uuid="${authorization.chargepoint_uuid}" data-authorization-uuid="${authorization.uuid}">Set as Primary</button>` : ''}
+                        <div class="action-buttons">
+                            <a class="btn btn-sm btn-primary" href="${authorization.edit_url}">Edit</a>
+                            <a class="btn btn-sm btn-danger" href="${authorization.delete_url}">Delete</a>
+                            <a class="btn btn-sm btn-secondary" href="${authorization.view_logs_url}">Logs <span class="badge badge-light">${authorization.log_count}</span></a>
+                            ${!authorization.is_primary ? `<button class="btn btn-sm btn-success set-primary" data-chargepoint-uuid="${authorization.chargepoint_uuid}" data-authorization-uuid="${authorization.uuid}">Set Primary</button>` : ''}
                         </div>
                     </td>
                 </tr>
@@ -186,9 +246,9 @@ document.addEventListener("DOMContentLoaded", function() {
         authorizationsSection.innerHTML = authorizationsHtml;
     }
 
-    refreshButton.addEventListener("click", function() {
-        loadDashboardData();
-    });
+    refreshButton.addEventListener("click", loadDashboardData);
+    chargepointSearch.addEventListener("input", updateChargepointsTable);
+    authorizationSearch.addEventListener("input", updateAuthorizationsTable);
 
     // Event delegation for dynamic buttons
     document.addEventListener('click', function(event) {
@@ -204,6 +264,10 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 console.error('Failed to get chargepoint UUID or authorization UUID');
             }
+        }
+        if (event.target.classList.contains('restart-chargepoint')) {
+            const chargepointUuid = event.target.getAttribute('data-chargepoint-uuid');
+            restartChargepoint(chargepointUuid);
         }
     });
 
@@ -262,6 +326,33 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => {
             console.error('Error:', error);
             alert('An error occurred while setting the primary authorization.');
+        });
+    }
+
+    function restartChargepoint(chargepointUuid) {
+        if (!confirm('Are you sure you want to restart this chargepoint?')) {
+            return;
+        }
+
+        fetch("/api/chargepoints/" + chargepointUuid + "/restart/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Chargepoint restart initiated successfully.');
+                loadDashboardData();
+            } else {
+                alert('Failed to restart chargepoint: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while restarting the chargepoint.');
         });
     }
 

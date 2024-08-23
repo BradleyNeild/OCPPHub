@@ -228,13 +228,12 @@ class ConnectionManager:
                 action="Chargepoint Disconnected",
                 from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
                 to_entity={"name": "System", "type": "System"},
-                message=f"Chargepoint {chargepoint_name} disconnected",
+                message=f"CP {chargepoint_name} disconnected",
                 level='INFO'
             )
         else:
             logger.warning(f"No existing connection found for CP {chargepoint_name}")
         logger.info(f"CP connection removed: {chargepoint_uuid}")
-
 
     async def _add_csms_connection(self, chargepoint_uuid: str, authorization: Authorization, websocket: websockets.WebSocketClientProtocol):
         chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
@@ -266,8 +265,8 @@ class ConnectionManager:
             from_entity={"name": csms_name, "type": "CSMS", "uuid": str(authorization.uuid)},
             to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
             message=f"CSMS {csms_name} {primary_status} connected to CP {chargepoint_name}",
-        level='INFO'
-    )
+            level='INFO'
+        )
 
     async def _remove_csms_connection(self, chargepoint_uuid: str, authorization_uuid: str):
         logger.info(f"Removing CSMS connection: {authorization_uuid} for CP {chargepoint_uuid}")
@@ -303,7 +302,6 @@ class ConnectionManager:
         else:
             logger.warning(f"No existing CSMS connections found for CP {chargepoint_name}")
         logger.info(f"CSMS connection removed: {authorization_uuid} for CP {chargepoint_uuid}")
-
 
     async def _connect_to_csms(self, chargepoint_uuid: str, authorization: Authorization) -> bool:
         chargepoint = await sync_to_async(ChargePoint.objects.get)(uuid=chargepoint_uuid)
@@ -387,7 +385,7 @@ class ConnectionManager:
                             authorization=authorization,
                             event_type='MessageSent',
                             action="Message Sent to CSMS",
-                            from_entity={"name": "Proxy", "type": "System"},
+                            from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
                             to_entity={"name": authorization.csms_name, "type": "CSMS", "uuid": str(authorization.uuid)},
                             message=f"Message sent to CSMS {authorization.csms_name} {primary_status}",
                             raw_message=message,
@@ -400,7 +398,7 @@ class ConnectionManager:
                             authorization=authorization,
                             event_type='MessageError',
                             action="Failed to Send Message to CSMS",
-                            from_entity={"name": "Proxy", "type": "System"},
+                            from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
                             to_entity={"name": authorization.csms_name, "type": "CSMS", "uuid": str(authorization.uuid)},
                             message=error_message,
                             raw_message=message,
@@ -439,7 +437,7 @@ class ConnectionManager:
                 action="Message Sent to Chargepoint",
                 from_entity={"name": authorization.csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
                 to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                message=f"Message sent to Chargepoint {chargepoint_name} from CSMS {authorization.csms_name}",
+                message=f"Message sent to CP {chargepoint_name} from CSMS {authorization.csms_name}",
                 raw_message=message,
                 level='INFO'
             )
@@ -482,6 +480,17 @@ class ConnectionManager:
             chargepoint_name = chargepoint.name
             async for message in csms_ws:
                 logger.info(f"Received message from CSMS {csms_name} {primary_status} for CP {chargepoint_name}. Message: {message}")
+                await create_log_entry_async(
+                    chargepoint_uuid=chargepoint_uuid,
+                    authorization=authorization,
+                    event_type='MessageReceived',
+                    action="Message Received from CSMS",
+                    from_entity={"name": csms_name, "type": "CSMS", "uuid": str(csms_uuid)},
+                    to_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
+                    message=f"Message received from CSMS {csms_name} {primary_status}",
+                    raw_message=message,
+                    level='INFO'
+                )
                 await self.message_processor.process_message_from_csms(chargepoint_uuid, message, csms_uuid)
         except Exception as e:
             error_message = f"Error handling messages from CSMS {csms_name}: {str(e)}"
@@ -498,6 +507,7 @@ class ConnectionManager:
                 raw_message=str(e)
             )
             await self._remove_csms_connection(chargepoint_uuid, csms_uuid)
+
 
     async def close_authorization_connection(self, authorization_uuid: str):
         logger.info(f"Closing authorization connection: {authorization_uuid}")
@@ -542,21 +552,18 @@ class ConnectionManager:
             chargepoint_name = chargepoint.name
 
             logger.info(f"Received message from CP {chargepoint_name}. Message: {message}")
-            await self.message_processor.process_message_from_chargepoint(chargepoint_uuid, message)
-
-            # Log the raw message being sent to the CSMS
-            parsed_message = json.loads(message)
-            event_type = identify_event_type(parsed_message)
             await create_log_entry_async(
                 chargepoint_uuid=chargepoint_uuid,
-                event_type=event_type,
-                action="Message received from ChargePoint",
+                event_type='MessageReceived',
+                action="Message Received from Chargepoint",
                 from_entity={"name": chargepoint_name, "type": "Chargepoint", "uuid": str(chargepoint_uuid)},
-                to_entity={"name": "CSMS", "type": "CSMS"},
-                message=json.dumps(parsed_message, indent=2),
+                to_entity={"name": "Proxy", "type": "System"},
+                message=f"Message received from CP {chargepoint_name}",
                 raw_message=message,
                 level='INFO'
             )
+            await self.message_processor.process_message_from_chargepoint(chargepoint_uuid, message)
+
         except json.JSONDecodeError:
             logger.error(f"Invalid JSON received from CP {chargepoint_uuid}: {message}")
             await create_log_entry_async(

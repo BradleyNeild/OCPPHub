@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% load form_filters %}
-
 {% block title %}{% if is_edit %}Edit{% else %}Create{% endif %} Charge Point{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="card mt-5">
@@ -10,7 +8,7 @@
             <h1 class="h5">{% if is_edit %}Edit{% else %}Create{% endif %} Charge Point</h1>
         </div>
         <div class="card-body">
-            <form method="post" class="needs-validation" novalidate>
+            <form method="post" class="needs-validation" novalidate id="chargepointForm">
                 {% csrf_token %}
                 <div class="form-row">
                     <div class="col-md-6 mb-3">
@@ -28,4 +26,37 @@
         </div>
     </div>
 </div>
+
+<!-- Warning Modal -->
+<div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="warningModalLabel">Warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Please note that changes to the chargepoint will only take effect after manually restarting it on the dashboard.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirmSubmit">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('chargepointForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    $('#warningModal').modal('show');
+});
+
+document.getElementById('confirmSubmit').addEventListener('click', function() {
+    $('#warningModal').modal('hide');
+    document.getElementById('chargepointForm').submit();
+});
+</script>
 {% endblock %}

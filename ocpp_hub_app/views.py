@@ -188,12 +188,10 @@ def authorization_edit(request, chargepoint_uuid, auth_uuid):
         form = AuthorizationForm(request.POST, instance=authorization)
         if form.is_valid():
             form.save()
-            reset_chargepoint_connections(chargepoint_uuid)
             return redirect('authorization_list', uuid=chargepoint_uuid)
     else:
         form = AuthorizationForm(instance=authorization)
     return render(request, 'authorization/authorization_form.html', {'form': form, 'chargepoint': chargepoint})
-
 
 @login_required
 @permission_classes([IsProxyOrOwner])
@@ -269,6 +267,66 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 @login_required
+@require_http_methods(["POST"])
+def chargepoint_log_data(request, uuid):
+    try:
+        chargepoint = get_object_or_404(ChargePoint, uuid=uuid, user=request.user)
+        data = json.loads(request.body)
+        
+        event_types = data.get('eventTypes', [])
+        start_date = data.get('startDate')
+        end_date = data.get('endDate')
+        search_query = data.get('searchQuery', '').lower()
+        logs_per_page = int(data.get('logsPerPage', 30))
+        page = int(data.get('page', 1))
+
+        logs = LogEntry.objects.filter(chargepoint=chargepoint).order_by('-timestamp')
+
+        if event_types:
+            logs = logs.filter(event_type__in=event_types)
+
+        if start_date:
+            logs = logs.filter(timestamp__gte=make_aware(datetime.fromisoformat(start_date)))
+
+        if end_date:
+            logs = logs.filter(timestamp__lte=make_aware(datetime.fromisoformat(end_date)))
+
+        if search_query:
+            logs = logs.filter(
+                Q(message__icontains=search_query) |
+                Q(event_type__icontains=search_query) |
+                Q(raw_message__icontains=search_query)
+            )
+
+        paginator = Paginator(logs, logs_per_page)
+        page_obj = paginator.get_page(page)
+
+        log_data = []
+        for log in page_obj:
+            log_data.append({
+                'timestamp': log.timestamp.isoformat(),
+                'event_type': log.event_type,
+                'message': log.message,
+                'raw_message': log.raw_message
+            })
+
+        response_data = {
+            'logs': log_data,
+            'totalLogs': paginator.count,
+            'totalPages': paginator.num_pages,
+            'currentPage': page
+        }
+
+        return JsonResponse(response_data)
+
+    except json.JSONDecodeError as e:
+        return JsonResponse({'error': 'Invalid JSON in request body'}, status=400)
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': 'An unexpected error occurred while fetching logs'}, status=500)
+
+@login_required
 def chargepoint_log_list(request):
     chargepoints = ChargePoint.objects.filter(user=request.user)
     return render(request, 'chargepoint/chargepoint_log_list.html', {'chargepoints': chargepoints})
@@ -281,14 +339,72 @@ def authorization_log_list(request):
 @login_required
 def chargepoint_log(request, uuid):
     chargepoint = get_object_or_404(ChargePoint, uuid=uuid, user=request.user)
-    logs = LogEntry.objects.filter(chargepoint=chargepoint).order_by('-timestamp')
-    return render(request, 'chargepoint/chargepoint_log.html', {'chargepoint': chargepoint, 'logs': logs})
+    return render(request, 'chargepoint/chargepoint_log.html', {'chargepoint': chargepoint})
 
 @login_required
 def authorization_log(request, uuid):
-    authorization = get_object_or_404(Authorization, uuid=uuid)
-    logs = LogEntry.objects.filter(authorization=authorization).order_by('-timestamp')
-    return render(request, 'authorization/authorization_log.html', {'authorization': authorization, 'logs': logs})
+    authorization = get_object_or_404(Authorization, uuid=uuid, chargepoint__user=request.user)
+    return render(request, 'authorization/authorization_log.html', {'authorization': authorization})
+
+@login_required
+@require_http_methods(["POST"])
+def authorization_log_data(request, uuid):
+    try:
+        authorization = get_object_or_404(Authorization, uuid=uuid, chargepoint__user=request.user)
+        data = json.loads(request.body)
+        
+        event_types = data.get('eventTypes', [])
+        start_date = data.get('startDate')
+        end_date = data.get('endDate')
+        search_query = data.get('searchQuery', '').lower()
+        logs_per_page = int(data.get('logsPerPage', 30))
+        page = int(data.get('page', 1))
+
+        logs = LogEntry.objects.filter(authorization=authorization).order_by('-timestamp')
+
+        if event_types:
+            logs = logs.filter(event_type__in=event_types)
+
+        if start_date:
+            logs = logs.filter(timestamp__gte=make_aware(datetime.fromisoformat(start_date)))
+
+        if end_date:
+            logs = logs.filter(timestamp__lte=make_aware(datetime.fromisoformat(end_date)))
+
+        if search_query:
+            logs = logs.filter(
+                Q(message__icontains=search_query) |
+                Q(event_type__icontains=search_query) |
+                Q(raw_message__icontains=search_query)
+            )
+
+        paginator = Paginator(logs, logs_per_page)
+        page_obj = paginator.get_page(page)
+
+        log_data = []
+        for log in page_obj:
+            log_data.append({
+                'timestamp': log.timestamp.isoformat(),
+                'event_type': log.event_type,
+                'message': log.message,
+                'raw_message': log.raw_message
+            })
+
+        response_data = {
+            'logs': log_data,
+            'totalLogs': paginator.count,
+            'totalPages': paginator.num_pages,
+            'currentPage': page
+        }
+
+        return JsonResponse(response_data)
+
+    except json.JSONDecodeError as e:
+        return JsonResponse({'error': 'Invalid JSON in request body'}, status=400)
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': 'An unexpected error occurred while fetching logs'}, status=500)
 
 @api_view(['PATCH'])
 @permission_classes([IsProxyOrOwner])
@@ -368,7 +484,6 @@ def chargepoint_edit(request, uuid):
         form = ChargePointForm(request.POST, instance=chargepoint)
         if form.is_valid():
             form.save()
-            reset_chargepoint_connections(uuid)
             return redirect('dashboard')
     else:
         form = ChargePointForm(instance=chargepoint)
@@ -825,7 +940,6 @@ def set_primary_authorization(request, chargepoint_uuid, authorization_uuid):
             authorization.is_primary = True
             authorization.save()
 
-            # Use reset_chargepoint_connections instead of reset_chargepoint_connections
             reset_success = reset_chargepoint_connections(chargepoint_uuid)
 
             if reset_success:
@@ -856,20 +970,9 @@ def set_primary_authorization(request, chargepoint_uuid, authorization_uuid):
     except Exception as e:
         logger.error(f"Error setting primary authorization: {str(e)}", exc_info=True)
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-
-@login_required
-@require_POST
-def reset_chargepoint_connections(request):
+    
+def reset_chargepoint_connections(chargepoint_uuid):
     try:
-        data = json.loads(request.body)
-        chargepoint_uuid = data.get('chargepoint_uuid')
-        
-        if not chargepoint_uuid:
-            logger.error('chargepoint_uuid is required')
-            return JsonResponse({'error': 'chargepoint_uuid is required'}, status=400)
-        
-        chargepoint = get_object_or_404(ChargePoint, uuid=chargepoint_uuid, user=request.user)
-        
         proxy_url = os.getenv('PROXY_SERVER_URL')
         reset_endpoint = f"{proxy_url}/api/reset_chargepoint_connections"
         
@@ -877,14 +980,14 @@ def reset_chargepoint_connections(request):
         
         if response.status_code == 200:
             logger.info(f'Successfully reset connections for chargepoint {chargepoint_uuid}')
-            return JsonResponse({'status': 'success'})
+            return True
         else:
             error_message = response.json().get('error', 'Unknown error occurred')
             logger.error(f'Failed to reset connections for chargepoint {chargepoint_uuid}: {error_message}')
-            return JsonResponse({'error': error_message}, status=500)
+            return False
     except Exception as e:
         logger.error(f'Error resetting connections for chargepoint {chargepoint_uuid}: {str(e)}', exc_info=True)
-        return JsonResponse({'error': str(e)}, status=500)
+        return False
 
 def notify_proxy_server_set_primary(chargepoint_uuid, authorization_uuid, authorizations_data):
     proxy_url = os.getenv('PROXY_SERVER_URL')

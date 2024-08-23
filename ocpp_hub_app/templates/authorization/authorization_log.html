@@ -2,11 +2,19 @@
 
 {% block title %}{{ authorization.csms_name }} Log{% endblock %}
 
+{% block extra_head %}
+<style>
+    .container {
+        max-width: 95%;
+    }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <div class="container">
     <h1 class="mt-5">{{ authorization.csms_name }} Log</h1>
 
-    <!-- Filter Bar -->
     <div class="filters mt-3">
         <div class="row">
             <div class="col-md-12">
@@ -15,23 +23,70 @@
                     <span class="float-right">▼</span>
                 </button>
                 <div id="filterButtonsContainer" class="collapse mt-2">
-                    <div class="d-flex flex-wrap">
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Boot Notification">Boot Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Heartbeat">Heartbeat</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Meter Values">Meter Values</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Authorize">Authorize</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Start Transaction">Start Transaction</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Stop Transaction">Stop Transaction</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Status Notification">Status Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Firmware Status Notification">Firmware Status Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Diagnostics Status Notification">Diagnostics Status Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Data Transfer">Data Transfer</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Call Result">Call Result</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Information">Information</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Error">Error</button>
-                        <button type="button" class="btn btn-primary toggle-all-filters-button m-1" id="toggleAllFiltersButton">Toggle All Filters</button>
+                    <!-- OCPP Messages -->
+                    <h5>OCPP Messages</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Authorize">Authorize</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="BootNotification">BootNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="CancelReservation">CancelReservation</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ChangeAvailability">ChangeAvailability</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ChangeConfiguration">ChangeConfiguration</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ClearCache">ClearCache</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ClearChargingProfile">ClearChargingProfile</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="DataTransfer">DataTransfer</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="DiagnosticsStatusNotification">DiagnosticsStatusNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="FirmwareStatusNotification">FirmwareStatusNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetCompositeSchedule">GetCompositeSchedule</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetConfiguration">GetConfiguration</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetDiagnostics">GetDiagnostics</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetLocalListVersion">GetLocalListVersion</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Heartbeat">Heartbeat</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MeterValues">MeterValues</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="RemoteStartTransaction">RemoteStartTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="RemoteStopTransaction">RemoteStopTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ReserveNow">ReserveNow</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Reset">Reset</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="SendLocalList">SendLocalList</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="SetChargingProfile">SetChargingProfile</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="StartTransaction">StartTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="StatusNotification">StatusNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="StopTransaction">StopTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="TriggerMessage">TriggerMessage</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="UnlockConnector">UnlockConnector</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="UpdateFirmware">UpdateFirmware</button>
                     </div>
-                    <div class="row mt-2">
+    
+                    <!-- OCPP Responses -->
+                    <h5>OCPP Responses</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="CallResult">CallResult</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="CallError">CallError</button>
+                    </div>
+    
+                    <!-- System Events -->
+                    <h5>System Events</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Error">Error</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Information">Information</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Connection">Connection</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ConnectionError">ConnectionError</button>
+                    </div>
+    
+                    <!-- Proxy Events -->
+                    <h5>Proxy Events</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MessageSent">MessageSent</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MessageReceived">MessageReceived</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MessageError">MessageError</button>
+                    </div>
+    
+                    <!-- Toggle All Button -->
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary" id="toggleAllFiltersButton">Toggle All Filters</button>
+                    </div>
+    
+                    <!-- Date Range Filters -->
+                    <div class="row mt-3">
                         <div class="col-md-6">
                             <label for="startDate">Start Date:</label>
                             <input type="datetime-local" id="startDate" class="form-control">
@@ -41,6 +96,8 @@
                             <input type="datetime-local" id="endDate" class="form-control">
                         </div>
                     </div>
+    
+                    <!-- Search Filter -->
                     <div class="row mt-2">
                         <div class="col-12">
                             <label for="searchInput">Search:</label>
@@ -52,31 +109,48 @@
         </div>
     </div>
 
+    <!-- Pagination Controls -->
+    <div class="pagination-controls mt-3">
+        <select id="logsPerPage" class="form-control">
+            <option value="30">30 per page</option>
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+            <option value="200">200 per page</option>
+        </select>
+        <span id="paginationInfo"></span>
+        <div class="pagination-buttons">
+            <button id="previousPageButton" class="btn btn-secondary">Previous</button>
+            <button id="nextPageButton" class="btn btn-secondary">Next</button>
+        </div>
+    </div>
+
+    <!-- Error Message Display -->
+    <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+
+    <!-- Logs Table -->
     <div class="table-responsive mt-3">
-        <table class="table table-striped table-fixed">
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width: 15%;">Timestamp</th>
-                    <th style="width: 15%;">Event Type</th>
-                    <th style="width: 35%;">Message</th>
-                    <th style="width: 35%;">Raw Message</th>
+                    <th>Timestamp</th>
+                    <th>Event Type</th>
+                    <th>Message</th>
+                    <th>Details</th>
                 </tr>
             </thead>
             <tbody id="logTableBody">
-                {% for log in logs %}
-                <tr>
-                    <td class="timestamp-cell">
-                        <span>{{ log.timestamp|date:"d/m/y" }}</span>
-                        <span>{{ log.timestamp|date:"H:i:s" }}</span>
-                    </td>
-                    <td>{{ log.event_type }}</td>
-                    <td>{{ log.message }}</td>
-                    <td>{{ log.raw_message }}</td>
-                </tr>
-                {% endfor %}
+                <!-- Logs will be dynamically loaded here -->
             </tbody>
         </table>
     </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center mt-3" style="display: none;">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
     <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
 </div>
 
@@ -89,8 +163,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const startDateInput = document.getElementById("startDate");
     const endDateInput = document.getElementById("endDate");
     const searchInput = document.getElementById("searchInput");
+    const logsPerPageSelect = document.getElementById("logsPerPage");
+    const previousPageButton = document.getElementById("previousPageButton");
+    const nextPageButton = document.getElementById("nextPageButton");
     const logTableBody = document.getElementById("logTableBody");
+    const paginationInfo = document.getElementById("paginationInfo");
+    const errorMessageDiv = document.getElementById("errorMessage");
+    const loadingSpinner = document.getElementById("loadingSpinner");
     const selectedEventTypes = new Set();
+    let currentPage = 1;
+    let totalPages = 1;
 
     // Initialize all event types as selected
     eventTypeButtons.forEach(button => {
@@ -108,59 +190,168 @@ document.addEventListener("DOMContentLoaded", function() {
             const eventType = button.getAttribute("data-event-type");
             if (selectedEventTypes.has(eventType)) {
                 selectedEventTypes.delete(eventType);
-                button.classList.remove("btn-success");
-                button.classList.add("btn-light");
+                button.classList.remove("active");
             } else {
                 selectedEventTypes.add(eventType);
-                button.classList.remove("btn-light");
-                button.classList.add("btn-success");
+                button.classList.add("active");
             }
-            applyFilters();
+            loadLogs();
         });
     });
 
     toggleAllFiltersButton.addEventListener("click", function() {
-        const allActive = [...eventTypeButtons].every(button => button.classList.contains("btn-success"));
+        const allActive = [...eventTypeButtons].every(button => button.classList.contains("active"));
         eventTypeButtons.forEach(button => {
             const eventType = button.getAttribute("data-event-type");
             if (allActive) {
                 selectedEventTypes.delete(eventType);
-                button.classList.remove("btn-success");
-                button.classList.add("btn-light");
+                button.classList.remove("active");
             } else {
                 selectedEventTypes.add(eventType);
-                button.classList.remove("btn-light");
-                button.classList.add("btn-success");
+                button.classList.add("active");
             }
         });
-        applyFilters();
+        loadLogs();
     });
 
-    startDateInput.addEventListener("change", applyFilters);
-    endDateInput.addEventListener("change", applyFilters);
-    searchInput.addEventListener("input", applyFilters);
+    startDateInput.addEventListener("change", loadLogs);
+    endDateInput.addEventListener("change", loadLogs);
+    searchInput.addEventListener("input", debounce(loadLogs, 300));
+    logsPerPageSelect.addEventListener("change", function() {
+        currentPage = 1;
+        loadLogs();
+    });
+    previousPageButton.addEventListener("click", function() {
+        if (currentPage > 1) {
+            currentPage--;
+            loadLogs();
+        }
+    });
+    nextPageButton.addEventListener("click", function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            loadLogs();
+        }
+    });
 
-    function applyFilters() {
+    function showError(message) {
+        errorMessageDiv.textContent = message;
+        errorMessageDiv.style.display = 'block';
+    }
+
+    function hideError() {
+        errorMessageDiv.style.display = 'none';
+    }
+
+    function showLoading() {
+        loadingSpinner.style.display = 'block';
+    }
+
+    function hideLoading() {
+        loadingSpinner.style.display = 'none';
+    }
+
+    function loadLogs() {
+        const logsPerPage = logsPerPageSelect.value;
         const startDate = startDateInput.value;
         const endDate = endDateInput.value;
         const searchQuery = searchInput.value.toLowerCase();
 
-        let rows = logTableBody.getElementsByTagName("tr");
-        for (let row of rows) {
-            let eventTypeMatch = selectedEventTypes.size > 0 && selectedEventTypes.has(row.cells[1].innerText);
-            let timestamp = new Date(row.cells[0].querySelector("span:last-child").innerText);
-            let startDateMatch = !startDate || timestamp >= new Date(startDate);
-            let endDateMatch = !endDate || timestamp <= new Date(endDate);
-            let searchMatch = Array.from(row.cells).some(cell => cell.innerText.toLowerCase().includes(searchQuery));
+        const filters = {
+            eventTypes: [...selectedEventTypes],
+            startDate,
+            endDate,
+            searchQuery,
+            logsPerPage,
+            page: currentPage,
+            authorizationUuid: '{{ authorization.uuid }}'
+        };
 
-            if (eventTypeMatch && startDateMatch && endDateMatch && searchMatch) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
+        showLoading();
+        hideError();
+
+        fetch("{% url 'authorization_log_data' uuid=authorization.uuid %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(filters)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        }
+            return response.json();
+        })
+        .then(data => {
+            logTableBody.innerHTML = '';
+            if (data.logs.length === 0) {
+                logTableBody.innerHTML = '<tr><td colspan="4" class="text-center">No logs found</td></tr>';
+            } else {
+                data.logs.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="timestamp-cell">
+                            <span>${new Date(log.timestamp).toLocaleDateString()}</span>
+                            <span>${new Date(log.timestamp).toLocaleTimeString()}</span>
+                        </td>
+                        <td>${log.event_type}</td>
+                        <td>${log.message}</td>
+                        <td>
+                            <button class="btn btn-sm btn-link toggle-details">Show Details</button>
+                            <div class="log-details" style="display: none;">
+                                <h6>Raw Message:</h6>
+                                <pre>${log.raw_message || 'No raw message available'}</pre>
+                            </div>
+                        </td>
+                    `;
+                    logTableBody.appendChild(row);
+
+                    // Add event listener for toggling details
+                    const toggleButton = row.querySelector('.toggle-details');
+                    const detailsDiv = row.querySelector('.log-details');
+                    toggleButton.addEventListener('click', function() {
+                        if (detailsDiv.style.display === 'none') {
+                            detailsDiv.style.display = 'block';
+                            toggleButton.textContent = 'Hide Details';
+                        } else {
+                            detailsDiv.style.display = 'none';
+                            toggleButton.textContent = 'Show Details';
+                        }
+                    });
+                });
+            }
+
+            totalPages = Math.ceil(data.totalLogs / logsPerPage);
+            previousPageButton.disabled = currentPage === 1;
+            nextPageButton.disabled = currentPage === totalPages;
+
+            // Update pagination info
+            paginationInfo.textContent = `Page ${currentPage} of ${totalPages} (Total logs: ${data.totalLogs})`;
+            hideLoading();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError(`Error loading logs: ${error.message}`);
+            hideLoading();
+        });
     }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // Initial load
+    loadLogs();
 });
 </script>
 {% endblock %}
-

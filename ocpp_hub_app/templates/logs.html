@@ -2,11 +2,19 @@
 
 {% block title %}System Logs{% endblock %}
 
+{% block extra_head %}
+<style>
+    .container {
+        max-width: 95%;
+    }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <div class="container">
     <h1 class="mt-5">System Logs</h1>
 
-    <!-- Filter Bar -->
     <div class="filters mt-3">
         <div class="row">
             <div class="col-md-12">
@@ -15,29 +23,71 @@
                     <span class="float-right">▼</span>
                 </button>
                 <div id="filterButtonsContainer" class="collapse mt-2">
-                    <div class="d-flex flex-wrap">
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Boot Notification">Boot Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Heartbeat">Heartbeat</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Meter Values">Meter Values</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Authorize">Authorize</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Start Transaction">Start Transaction</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Stop Transaction">Stop Transaction</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Status Notification">Status Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Firmware Status Notification">Firmware Status Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Diagnostics Status Notification">Diagnostics Status Notification</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Data Transfer">Data Transfer</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Call Result">Call Result</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Call Error">Call Error</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Information">Information</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Error">Error</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Connection">Connection</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="ConnectionError">ConnectionError</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="MessageSent">MessageSent</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="MessageError">MessageError</button>
-                        <button type="button" class="btn btn-success event-type-button m-1 active" data-event-type="Authorization">Authorization</button>
-                        <button type="button" class="btn btn-primary toggle-all-filters-button m-1" id="toggleAllFiltersButton">Toggle All Filters</button>
+                    <!-- OCPP Messages -->
+                    <h5>OCPP Messages</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Authorize">Authorize</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="BootNotification">BootNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="CancelReservation">CancelReservation</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ChangeAvailability">ChangeAvailability</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ChangeConfiguration">ChangeConfiguration</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ClearCache">ClearCache</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ClearChargingProfile">ClearChargingProfile</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="DataTransfer">DataTransfer</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="DiagnosticsStatusNotification">DiagnosticsStatusNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="FirmwareStatusNotification">FirmwareStatusNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetCompositeSchedule">GetCompositeSchedule</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetConfiguration">GetConfiguration</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetDiagnostics">GetDiagnostics</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="GetLocalListVersion">GetLocalListVersion</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Heartbeat">Heartbeat</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MeterValues">MeterValues</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="RemoteStartTransaction">RemoteStartTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="RemoteStopTransaction">RemoteStopTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ReserveNow">ReserveNow</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Reset">Reset</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="SendLocalList">SendLocalList</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="SetChargingProfile">SetChargingProfile</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="StartTransaction">StartTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="StatusNotification">StatusNotification</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="StopTransaction">StopTransaction</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="TriggerMessage">TriggerMessage</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="UnlockConnector">UnlockConnector</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="UpdateFirmware">UpdateFirmware</button>
                     </div>
-                    <div class="row mt-2">
+    
+                    <!-- OCPP Responses -->
+                    <h5>OCPP Responses</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="CallResult">CallResult</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="CallError">CallError</button>
+                    </div>
+    
+                    <!-- System Events -->
+                    <h5>System Events</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Error">Error</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Information">Information</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="Connection">Connection</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="ConnectionError">ConnectionError</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="CONNECTION">CONNECTION</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="SYSTEM">SYSTEM</button>
+                    </div>
+    
+                    <!-- Proxy Events -->
+                    <h5>Proxy Events</h5>
+                    <div class="d-flex flex-wrap mb-2">
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MessageSent">MessageSent</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MessageReceived">MessageReceived</button>
+                        <button type="button" class="btn event-type-button m-1 active" data-event-type="MessageError">MessageError</button>
+                    </div>
+                    
+                    <!-- Toggle All Button -->
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary" id="toggleAllFiltersButton">Toggle All Filters</button>
+                    </div>
+
+                    <div class="row mt-3">
                         <div class="col-md-6">
                             <label for="startDate">Start Date:</label>
                             <input type="datetime-local" id="startDate" class="form-control">
@@ -69,19 +119,15 @@
     </div>
 
     <!-- Pagination Controls -->
-    <div class="row mt-3">
-        <div class="col-md-2">
-            <select id="logsPerPage" class="form-control">
-                <option value="30">30 per page</option>
-                <option value="50">50 per page</option>
-                <option value="100">100 per page</option>
-                <option value="200">200 per page</option>
-            </select>
-        </div>
-        <div class="col-md-8 text-center">
-            <span id="paginationInfo"></span>
-        </div>
-        <div class="col-md-2 text-right">
+    <div class="pagination-controls mt-3">
+        <select id="logsPerPage" class="form-control">
+            <option value="30">30 per page</option>
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+            <option value="200">200 per page</option>
+        </select>
+        <span id="paginationInfo"></span>
+        <div class="pagination-buttons">
             <button id="previousPageButton" class="btn btn-secondary">Previous</button>
             <button id="nextPageButton" class="btn btn-secondary">Next</button>
         </div>
@@ -92,16 +138,16 @@
 
     <!-- Logs Table -->
     <div class="table-responsive mt-3">
-        <table class="table table-striped table-fixed">
+        <table class="table table-striped">
             <thead>
                 <tr>
-                    <th style="width: 10%;">Timestamp</th>
-                    <th style="width: 5%;">Level</th>
-                    <th style="width: 10%;">Event Type</th>
-                    <th style="width: 15%;">Action</th>
-                    <th style="width: 15%;">From</th>
-                    <th style="width: 15%;">To</th>
-                    <th style="width: 30%;">Message</th>
+                    <th>Timestamp</th>
+                    <th>Level</th>
+                    <th>Event Type</th>
+                    <th>Action</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Message</th>
                 </tr>
             </thead>
             <tbody id="logTableBody">
@@ -116,6 +162,8 @@
             <span class="sr-only">Loading...</span>
         </div>
     </div>
+
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
 </div>
 
 <script>
@@ -156,29 +204,25 @@ document.addEventListener("DOMContentLoaded", function() {
             const eventType = button.getAttribute("data-event-type");
             if (selectedEventTypes.has(eventType)) {
                 selectedEventTypes.delete(eventType);
-                button.classList.remove("btn-success");
-                button.classList.add("btn-light");
+                button.classList.remove("active");
             } else {
                 selectedEventTypes.add(eventType);
-                button.classList.remove("btn-light");
-                button.classList.add("btn-success");
+                button.classList.add("active");
             }
             loadLogs();
         });
     });
 
     toggleAllFiltersButton.addEventListener("click", function() {
-        const allActive = [...eventTypeButtons].every(button => button.classList.contains("btn-success"));
+        const allActive = [...eventTypeButtons].every(button => button.classList.contains("active"));
         eventTypeButtons.forEach(button => {
             const eventType = button.getAttribute("data-event-type");
             if (allActive) {
                 selectedEventTypes.delete(eventType);
-                button.classList.remove("btn-success");
-                button.classList.add("btn-light");
+                button.classList.remove("active");
             } else {
                 selectedEventTypes.add(eventType);
-                button.classList.remove("btn-light");
-                button.classList.add("btn-success");
+                button.classList.add("active");
             }
         });
         loadLogs();
